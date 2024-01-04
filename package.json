@@ -1,0 +1,22 @@
+{
+  "name": "@ddbeck/web-features-burndown-tools",
+  "version": "0.1.0",
+  "description": "Tools for tracking progress toward web-features coverage",
+  "main": "src/index.mts",
+  "scripts": {
+    "lint": "npx eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel D. Beck <daniel@ddbeck.com> (https://ddbeck.com)",
+  "license": "UNLICENSED",
+  "private": "true",
+  "devDependencies": {
+    "@tsconfig/strictest": "^2.0.2",
+    "@typescript-eslint/eslint-plugin": "^6.17.0",
+    "@typescript-eslint/parser": "^6.17.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
