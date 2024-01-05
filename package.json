@@ -12,11 +12,20 @@
   "private": "true",
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.2",
+    "@types/better-sqlite3": "^7.6.8",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "eslint": "^8.56.0",
     "prettier": "^3.1.1",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@ddbeck/strict-browser-compat-data": "github:ddbeck/strict-browser-compat-data#export-types",
+    "better-sqlite3": "^9.2.2",
+    "execa": "^8.0.1"
+  },
+  "peerDependencies": {
+    "@mdn/browser-compat-data": "github:mdn/browser-compat-data"
   }
 }
