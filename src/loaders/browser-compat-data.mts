@@ -14,13 +14,13 @@ function load() {
     compatKeys.push(path);
   }
 
-  const hash = getPackageHash();
-  const date = getDate(hash);
+  const commitHash = getPackageHash();
+  const commitDate = getDate(commitHash);
 
-  insertHash({ hash, date });
-  insertLatest(hash);
+  insertHash({ commitHash, commitDate });
+  insertLatest(commitHash);
 
-  upsertKeys(hash, compatKeys);
+  upsertKeys(commitHash, compatKeys);
 }
 
 function getPackageHash(): string {
@@ -42,10 +42,10 @@ function getDate(hash: string): string {
   return stdout;
 }
 
-function insertHash(row: { hash: string; date: string }) {
+function insertHash(row: { commitHash: string; commitDate: string }) {
   const statement = db.prepare(
-    `INSERT INTO Browser_Compat_Data_Hashes (hash, date)
-    VALUES (@hash, @date)
+    `INSERT INTO browser_compat_data_hashes (commit_hash, commit_date)
+    VALUES (@commitHash, @commitDate)
     ON CONFLICT DO NOTHING`,
   );
   statement.run(row);
@@ -53,7 +53,7 @@ function insertHash(row: { hash: string; date: string }) {
 
 function getCurrentHash(): string | null {
   const select = db.prepare(
-    "SELECT Browser_Compat_Data_Latest.hash FROM Browser_Compat_Data_Latest",
+    "SELECT browser_compat_data_latest.commit_hash FROM browser_compat_data_latest",
   );
   const row = select.get();
   if (row && typeof row === "object") {
@@ -64,13 +64,15 @@ function getCurrentHash(): string | null {
   return null;
 }
 
-function insertLatest(hash: string) {
+function insertLatest(commitHash: string) {
   const previousHash: string = getCurrentHash() ?? "null";
 
-  const del = db.prepare("DELETE FROM Browser_Compat_Data_Latest"); // Clear existing entries
+  const del = db.prepare("DELETE FROM browser_compat_data_latest"); // Clear existing entries
   const insert = db
-    .prepare("INSERT INTO Browser_Compat_Data_Latest (hash) VALUES (@hash)")
-    .bind({ hash });
+    .prepare(
+      "INSERT INTO browser_compat_data_latest (commit_hash) VALUES (@commitHash)",
+    )
+    .bind({ commitHash });
 
   db.transaction(() => {
     del.run();
@@ -80,13 +82,13 @@ function insertLatest(hash: string) {
   console.log(
     `Updated @mdn/browser-compat-data hash from ${previousHash.slice(
       -6,
-    )} to ${hash.slice(-6)}`,
+    )} to ${commitHash.slice(-6)}`,
   );
 }
 
 function upsertKeys(hash: string, keys: string[]) {
   const upsertKey = db.prepare(
-    `INSERT INTO Browser_Compat_Data_Keys (key, hash)
+    `INSERT INTO browser_compat_data_keys (key, hash)
     VALUES (@key, @hash)
     ON CONFLICT (key) DO UPDATE SET hash = @hash`,
   );
