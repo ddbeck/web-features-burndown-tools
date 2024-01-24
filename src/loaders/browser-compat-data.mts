@@ -86,15 +86,15 @@ function insertLatest(commitHash: string) {
   );
 }
 
-function upsertKeys(hash: string, keys: string[]) {
+function upsertKeys(commitHash: string, keys: string[]) {
   const upsertKey = db.prepare(
-    `INSERT INTO browser_compat_data_keys (key, hash)
+    `INSERT INTO browser_compat_data_keys (featureKey, commitHash)
     VALUES (@key, @hash)
     ON CONFLICT (key) DO UPDATE SET hash = @hash`,
   );
   db.transaction(() => {
-    for (const key of keys) {
-      upsertKey.run({ hash, key });
+    for (const featureKey of keys) {
+      upsertKey.run({ commitHash, featureKey });
     }
   })();
   console.log(`Added or updated ${keys.length} compat keys`);

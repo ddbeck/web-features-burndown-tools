@@ -9,8 +9,8 @@ CREATE TABLE browser_compat_data_latest (
 );
 
 CREATE TABLE browser_compat_data_keys (
-    key TEXT PRIMARY KEY,
-    hash TEXT NOT NULL,
-    FOREIGN KEY (hash) REFERENCES browser_compat_data_hashes(hash)
-    UNIQUE (key, hash)
+    feature_key TEXT PRIMARY KEY NOT NULL,
+    commit_hash TEXT NOT NULL,
+    FOREIGN KEY (commit_hash) REFERENCES browser_compat_data_hashes(commit_hash)
+    UNIQUE (feature_key, commit_hash)
 );
