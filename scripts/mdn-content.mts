@@ -4,14 +4,17 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 
 import { execaSync } from "execa";
+import { parse } from "csv-parse/sync";
 import { stringify } from "csv-stringify/sync";
 import assert from "node:assert";
 
 const CACHE_PATH = "./.mdn-content-inventory-cache.json";
+const TOP1K = loadTop1000();
 
 interface MDNContentRecord {
   slug: string;
   compatKey: string;
+  inTop1000: string;
   lastSeen: string;
 }
 
@@ -35,6 +38,7 @@ function records(): MDNContentRecord[] {
         compatKey,
         lastSeen: commitHash,
         lastSeenDate: commitDate,
+        inTop1000: TOP1K.has(frontmatter.slug) ? "TRUE" : "FALSE",
       });
     }
   }
@@ -128,4 +132,19 @@ function getInventory(commitHash: string): Inventory {
   } finally {
     rmSync(tempDir, { recursive: true, force: true });
   }
+}
+
+function loadTop1000(csvPath?: string): Set<string> {
+  if (csvPath === undefined) {
+    csvPath = process.env["PAGE_VIEW_TRAFFIC_CSV"];
+  }
+  assert(typeof csvPath === "string", `${csvPath}`);
+
+  const csv = parse(readFileSync(csvPath, { encoding: "utf-8" }), {
+    columns: true,
+    skip_empty_lines: true,
+  }) as { page: string }[];
+
+  const slugs = csv.map((row) => row.page);
+  return new Set(slugs.slice(0, 1000));
 }
