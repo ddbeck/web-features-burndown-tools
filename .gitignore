@@ -1,2 +1,3 @@
-node_modules
+.mdn-content-inventory-cache.json
 burndown.db
+node_modules

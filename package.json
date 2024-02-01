@@ -5,6 +5,7 @@
   "main": "src/index.mts",
   "scripts": {
     "lint": "npx eslint .",
+    "update-sources": "npm install web-features@next && npm install github:mdn/browser-compat-data",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Daniel D. Beck <daniel@ddbeck.com> (https://ddbeck.com)",
@@ -13,6 +14,7 @@
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.2",
     "@types/better-sqlite3": "^7.6.8",
+    "@types/node": "^18.19.11",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "eslint": "^8.56.0",
@@ -22,8 +24,9 @@
   },
   "dependencies": {
     "@ddbeck/strict-browser-compat-data": "github:ddbeck/strict-browser-compat-data#export-types",
-    "better-sqlite3": "^9.2.2",
-    "execa": "^8.0.1"
+    "csv-stringify": "^6.4.5",
+    "execa": "^8.0.1",
+    "web-features": "^0.5.1-dev-20240201122259-2eed99e"
   },
   "peerDependencies": {
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data"
