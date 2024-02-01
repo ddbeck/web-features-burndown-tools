@@ -1,3 +1,4 @@
 .mdn-content-inventory-cache.json
+*.csv
 burndown.db
 node_modules
