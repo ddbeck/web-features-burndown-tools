@@ -1,48 +1,60 @@
-import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
+import assert from "node:assert";
 
 import { execaSync } from "execa";
 import { parse } from "csv-parse/sync";
-import { stringify } from "csv-stringify/sync";
-import assert from "node:assert";
 
 const CACHE_PATH = "./.mdn-content-inventory-cache.json";
-const TOP1K = loadTop1000();
 
-interface MDNContentRecord {
-  slug: string;
-  compatKey: string;
-  inTop1000: string;
-  lastSeen: string;
-}
+export function compatKeys(options?: {
+  commitHash?: string;
+  onlyTop1000Pages?: boolean;
+}): string[] {
+  const { commitHash, onlyTop1000Pages } = {
+    ...options,
+    ...{ onlyTop1000Pages: false },
+  };
+  const top1kSlugs = onlyTop1000Pages ? getTop1000Slugs() : null;
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  console.log(stringify(records(), { header: true }));
-}
-
-function records(): MDNContentRecord[] {
-  const result = [];
-  const { commitHash, commitDate, items } = getInventoryQuick();
+  const { items } = getInventory(commitHash);
+  const result: string[] = [];
   for (const { frontmatter } of items) {
-    if (frontmatter["browser-compat"] === undefined) {
-      continue;
-    }
-    const compatKeys = Array.isArray(frontmatter["browser-compat"])
-      ? frontmatter["browser-compat"]
-      : [frontmatter["browser-compat"]];
-    for (const compatKey of compatKeys) {
-      result.push({
-        slug: frontmatter.slug,
-        compatKey,
-        lastSeen: commitHash,
-        lastSeenDate: commitDate,
-        inTop1000: TOP1K.has(frontmatter.slug) ? "TRUE" : "FALSE",
-      });
+    const { "browser-compat": browserCompat } = frontmatter;
+    const keys = Array.isArray(browserCompat)
+      ? browserCompat
+      : typeof browserCompat === "string"
+        ? [browserCompat]
+        : [];
+
+    for (const key of keys) {
+      if (top1kSlugs === null) {
+        result.push(key);
+      } else {
+        throw new Error("Not implemented");
+      }
     }
   }
+
   return result;
+}
+
+function getTop1000Slugs(
+  csvPath = process.env["PAGE_VIEW_TRAFFIC_CSV"],
+): Set<string> {
+  if (csvPath === undefined) {
+    throw new Error(
+      "No page view traffic CSV path. Call with path or set PAGE_VIEW_TRAFFIC_CSV environment variable.",
+    );
+  }
+
+  const csv = parse(readFileSync(csvPath, { encoding: "utf-8" }), {
+    columns: true,
+    skip_empty_lines: true,
+  }) as { page: string }[];
+
+  return new Set(csv.map(({ page }) => page));
 }
 
 interface Inventory {
@@ -63,7 +75,7 @@ interface Frontmatter {
   "browser-compat"?: string | string[];
 }
 
-function getInventoryQuick(commitHash?: string): Inventory {
+function getInventory(commitHash?: string): Inventory {
   if (typeof commitHash !== "string") {
     commitHash = execaSync("git", [
       "ls-remote",
@@ -96,14 +108,14 @@ function getInventoryQuick(commitHash?: string): Inventory {
     return cacheLookup;
   }
 
-  console.warn(`Cache miss. Getting inventory from Git [@${commitHash}]`);
-  const newInventory = getInventory(commitHash);
+  console.warn(`Cache miss. Building mdn/content inventory @ ${commitHash}`);
+  const newInventory = getInventoryViaClone(commitHash);
   cache[commitHash] = newInventory;
   writeFileSync(CACHE_PATH, JSON.stringify(cache), { encoding: "utf-8" });
   return newInventory;
 }
 
-function getInventory(commitHash: string): Inventory {
+function getInventoryViaClone(commitHash: string): Inventory {
   const tempDir = mkdtempSync(join(tmpdir(), "web-features-burndown-tools-"));
   const inTemp = (file: string, args: string[]) =>
     execaSync(file, args, { cwd: tempDir });
@@ -132,19 +144,4 @@ function getInventory(commitHash: string): Inventory {
   } finally {
     rmSync(tempDir, { recursive: true, force: true });
   }
-}
-
-function loadTop1000(csvPath?: string): Set<string> {
-  if (csvPath === undefined) {
-    csvPath = process.env["PAGE_VIEW_TRAFFIC_CSV"];
-  }
-  assert(typeof csvPath === "string", `${csvPath}`);
-
-  const csv = parse(readFileSync(csvPath, { encoding: "utf-8" }), {
-    columns: true,
-    skip_empty_lines: true,
-  }) as { page: string }[];
-
-  const slugs = csv.map((row) => row.page);
-  return new Set(slugs.slice(0, 1000));
 }
