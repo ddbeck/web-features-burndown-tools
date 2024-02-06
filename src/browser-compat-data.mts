@@ -1,12 +1,12 @@
 import { execaSync } from "execa";
 
-import { walk } from "@ddbeck/strict-browser-compat-data";
+import { walk } from "@ddbeck/strict-browser-compat-data/browser-compat-data";
 
 export const commitHash = getPackageHash();
 
-export function compatKeys() {
+export function compatKeys(entryPoints: string[]) {
   const result = [];
-  for (const { path } of walk()) {
+  for (const { path } of walk(entryPoints)) {
     result.push(path as string);
   }
   return result;
