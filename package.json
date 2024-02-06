@@ -23,11 +23,11 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@ddbeck/strict-browser-compat-data": "github:ddbeck/strict-browser-compat-data#export-types",
+    "@ddbeck/strict-browser-compat-data": "github:ddbeck/strict-browser-compat-data",
     "csv-parse": "^5.5.3",
     "csv-stringify": "^6.4.5",
     "execa": "^8.0.1",
-    "web-features": "^0.5.1-dev-20240201122259-2eed99e"
+    "web-features": "^0.5.1-dev-20240206121142-9efaa51"
   },
   "peerDependencies": {
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data"
