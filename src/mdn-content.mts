@@ -13,11 +13,10 @@ export function compatKeys(options?: {
   onlyTop1000Pages?: boolean;
 }): string[] {
   const { commitHash, onlyTop1000Pages } = {
-    ...options,
     ...{ onlyTop1000Pages: false },
+    ...options,
   };
   const top1kSlugs = onlyTop1000Pages ? getTop1000Slugs() : null;
-
   const { items } = getInventory(commitHash);
   const result: string[] = [];
   for (const { frontmatter } of items) {
@@ -29,10 +28,8 @@ export function compatKeys(options?: {
         : [];
 
     for (const key of keys) {
-      if (top1kSlugs === null) {
+      if (top1kSlugs === null || top1kSlugs.has(frontmatter.slug)) {
         result.push(key);
-      } else {
-        throw new Error("Not implemented");
       }
     }
   }
@@ -52,7 +49,7 @@ function getTop1000Slugs(
   const csv = parse(readFileSync(csvPath, { encoding: "utf-8" }), {
     columns: true,
     skip_empty_lines: true,
-  }) as { page: string }[];
+  }).slice(0, 1000) as { page: string }[];
 
   return new Set(csv.map(({ page }) => page));
 }
