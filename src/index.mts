@@ -36,7 +36,10 @@ export interface BurndownEntry {
 function toBurndownEntry(compatKey: string): BurndownEntry {
   let computedBaselineLowDate: string | null = "unresolved";
   try {
-    computedBaselineLowDate = computeBaseline({ compatKey }).baseline_low_date;
+    computedBaselineLowDate = computeBaseline({
+      compatKeys: [compatKey],
+      checkAncestors: false,
+    }).baseline_low_date;
   } catch (err) {
     if (
       !(err instanceof Error && err.message?.includes("Cannot expand support"))
