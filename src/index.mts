@@ -1,8 +1,10 @@
 import { stringify } from "csv-stringify/sync";
+
+import { computeBaseline } from "@ddbeck/strict-browser-compat-data/baseline";
+
 import * as bcd from "./browser-compat-data.mjs";
 import * as mdn from "./mdn-content.mjs";
 import * as webFeatures from "./web-features.mjs";
-import { computeBaseline } from "@ddbeck/strict-browser-compat-data/baseline";
 
 const compatKeys = bcd.compatKeys([
   "api",
@@ -29,17 +31,20 @@ export interface BurndownEntry {
   citedByMDNTop1000Page: boolean;
   citedByWebFeatures: boolean | null;
   computedBaselineLowDate: string | null | "unresolved";
-  // computedBaselineHighDate: string | null;
+  computedBaselineHighDate: string | null | "unresolved";
   notes: "";
 }
 
 function toBurndownEntry(compatKey: string): BurndownEntry {
   let computedBaselineLowDate: string | null = "unresolved";
+  let computedBaselineHighDate: string | null = "unresolved";
   try {
-    computedBaselineLowDate = computeBaseline({
+    const calculation = computeBaseline({
       compatKeys: [compatKey],
       checkAncestors: false,
-    }).baseline_low_date;
+    });
+    computedBaselineLowDate = calculation.baseline_low_date;
+    computedBaselineHighDate = calculation.baseline_high_date;
   } catch (err) {
     if (
       !(err instanceof Error && err.message?.includes("Cannot expand support"))
@@ -55,6 +60,7 @@ function toBurndownEntry(compatKey: string): BurndownEntry {
     citedByMDNTop1000Page: compatKeysCitedByMDNTop1000.has(compatKey),
     citedByWebFeatures: compatKeysCitedByWebFeatures.has(compatKey),
     computedBaselineLowDate,
+    computedBaselineHighDate,
     notes: "",
   };
 }
