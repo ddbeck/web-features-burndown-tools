@@ -1,10 +1,10 @@
-import { join } from "node:path";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import assert from "node:assert";
 
 import { execaSync } from "execa";
 import { parse } from "csv-parse/sync";
+
+import { getTempDir } from "./temp.mjs";
 
 const CACHE_PATH = "./.mdn-content-inventory-cache.json";
 
@@ -72,7 +72,7 @@ interface Frontmatter {
   "browser-compat"?: string | string[];
 }
 
-function getInventory(commitHash?: string): Inventory {
+export function getInventory(commitHash?: string): Inventory {
   if (typeof commitHash !== "string") {
     commitHash = execaSync("git", [
       "ls-remote",
@@ -113,7 +113,7 @@ function getInventory(commitHash?: string): Inventory {
 }
 
 function getInventoryViaClone(commitHash: string): Inventory {
-  const tempDir = mkdtempSync(join(tmpdir(), "web-features-burndown-tools-"));
+  const tempDir = getTempDir();
   const inTemp = (file: string, args: string[]) =>
     execaSync(file, args, { cwd: tempDir });
   try {

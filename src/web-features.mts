@@ -2,6 +2,24 @@ import { execaSync } from "execa";
 
 import webFeatures from "web-features";
 
+export function ids(): string[] {
+  return Object.entries(webFeatures).map(([id]) => id);
+}
+
+export function caniuseIds(): string[] {
+  const ids = [];
+
+  for (const [, { caniuse }] of Object.entries(webFeatures)) {
+    if (Array.isArray(caniuse)) {
+      ids.push(...caniuse);
+    } else if (typeof caniuse === "string") {
+      ids.push(caniuse);
+    }
+  }
+
+  return ids;
+}
+
 export function compatKeys(): string[] {
   const result = [];
 
