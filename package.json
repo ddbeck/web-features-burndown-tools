@@ -26,13 +26,13 @@
   "dependencies": {
     "@ddbeck/strict-browser-compat-data": "github:ddbeck/strict-browser-compat-data",
     "@js-temporal/polyfill": "^0.4.4",
-    "caniuse-lite": "^1.0.30001587",
+    "@mdn/browser-compat-data": "^5.5.9",
+    "caniuse-lite": "^1.0.30001583",
+    "canvas": "^2.11.2",
+    "chart.js": "^4.4.1",
     "csv-parse": "^5.5.3",
     "csv-stringify": "^6.4.5",
     "execa": "^8.0.1",
-    "web-features": "^0.5.1-dev-20240216024559-c791088"
-  },
-  "peerDependencies": {
-    "@mdn/browser-compat-data": "github:mdn/browser-compat-data"
+    "web-features": "^0.5.1-dev-20240202233155-af11f68"
   }
 }

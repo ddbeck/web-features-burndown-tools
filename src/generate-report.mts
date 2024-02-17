@@ -6,8 +6,9 @@ import * as mdn from "./mdn-content.mjs";
 import * as webFeaturesData from "./web-features.mjs";
 import { readFileSync, readdirSync, writeFileSync } from "fs";
 import { join } from "path";
+import { fileURLToPath } from "url";
 
-interface ProgressReport {
+export interface ProgressReport {
   meta: {
     date: Temporal.ZonedDateTime;
     bcdVersion: string;
@@ -114,7 +115,7 @@ function calculateProgress(
   };
 }
 
-function getReportsDir(): string {
+export function getReportsDir(): string {
   if (typeof process.env["REPORTS_DIR"] !== "string") {
     throw Error("REPORTS_DIR environment variable not set");
   }
@@ -142,7 +143,7 @@ function getPreviousReport(): ProgressReport | undefined {
   const source = readFileSync(join(reportsDir, lastFile), {
     encoding: "utf-8",
   });
-  return JSON.parse(source, reviver);
+  return parseReport(source);
 }
 
 function replacer(_key: string, value: unknown) {
@@ -159,19 +160,32 @@ function reviver(key: string, value: unknown) {
   return value;
 }
 
-const previous = getPreviousReport();
-const dest = getReportsDir();
+export function parseReport(src: string): ProgressReport {
+  return JSON.parse(src, reviver);
+}
 
-console.warn(`Using previous report: ${previous}`);
-console.warn(`Using mdn/content commit: ${getMDNContentHash()}`);
-console.warn(`Writing reports to: ${getReportsDir()}`);
+function main() {
+  const previous = getPreviousReport();
+  const dest = getReportsDir();
 
-const result = calculateProgress(previous, getMDNContentHash());
+  console.warn(`Using previous report: ${previous}`);
+  console.warn(`Using mdn/content commit: ${getMDNContentHash()}`);
+  console.warn(`Writing reports to: ${getReportsDir()}`);
 
-writeFileSync(
-  `${dest}/${result.meta.date.toPlainDateTime().toString().replaceAll(/[.:]/g, "")}.json`,
-  JSON.stringify(result, replacer, 2),
-  {
-    encoding: "utf-8",
-  },
-);
+  const result = calculateProgress(previous, getMDNContentHash());
+
+  writeFileSync(
+    `${dest}/${result.meta.date.toPlainDateTime().toString().replaceAll(/[.:]/g, "")}.json`,
+    JSON.stringify(result, replacer, 2),
+    {
+      encoding: "utf-8",
+    },
+  );
+}
+
+if (import.meta.url.startsWith("file:")) {
+  const modulePath = fileURLToPath(import.meta.url);
+  if (process.argv[1] === modulePath) {
+    main();
+  }
+}
