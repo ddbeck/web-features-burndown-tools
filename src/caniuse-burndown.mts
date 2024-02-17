@@ -7,6 +7,7 @@ import { getTempDir } from "./temp.mjs";
 import { existsSync, rmSync } from "fs";
 import { join } from "path";
 import { stringify } from "csv-stringify/sync";
+import { version } from "./caniuse.mjs";
 
 const caniuseIdsInWebFeatures = new Set(caniuseIds());
 
@@ -107,12 +108,6 @@ class CaniuseGit {
     rmSync(this.tempDir, { recursive: true, force: true });
     console.warn(`Removed ${this.tempDir}`);
   }
-}
-
-function version(): string {
-  const { stdout } = execaSync("npm", ["list", "--json"]);
-  const { dependencies } = JSON.parse(stdout);
-  return dependencies["caniuse-lite"].version;
 }
 
 function formatLink(url: string, title: string) {

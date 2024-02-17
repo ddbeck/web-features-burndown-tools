@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "date": "2023-10-22T02:00:00+02:00[Europe/Amsterdam]",
+    "bcdVersion": "5.3.25",
+    "mdnContentCommitHash": "b333e28a08926b35b9b35b3b5e59ebbdf76fa9ad",
+    "webFeaturesVersion": "0.4.1",
+    "caniuseLiteVersion": "1.0.30001551"
+  },
+  "browserCompatData": {
+    "keys": 13377,
+    "keysChange": 137
+  },
+  "mdnContent": {
+    "compatKeysCited": 9688,
+    "compatKeysCitedChange": 0
+  },
+  "caniuse": {
+    "ids": 564,
+    "idsChange": 0
+  },
+  "webFeatures": {
+    "ids": 46,
+    "idsChange": 0,
+    "compatKeysCited": 267,
+    "compatKeysCitedChange": 0,
+    "caniuseIdsCited": 30,
+    "caniuseIdsCitedChange": 0
+  }
+}
