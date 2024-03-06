@@ -14,3 +14,13 @@ $ npx tsx ./src/compat-burndown.mts
 ```sh
 $ npx tsx ./src/caniuse-burndown.mts
 ```
+
+## Updating spreadsheets
+
+0. Make sure there are no notes in the notes column. This procedure won't work if the existing rows need to be updated.
+1. Run `npx tsx ./src/compat-burndown.mts > compat.tsv`.
+2. Open the unfiltered burndown spreadsheet.
+3. Run `tail +2 compat.tsv | pbcopy` (on macOS).
+4. Paste into cell A2.
+5. For each filter view, set the ranges to A1:H.
+6. Repeat for `caniuse-burndown.mts`.
