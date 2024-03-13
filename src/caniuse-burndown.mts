@@ -19,7 +19,6 @@ interface BurndownEntry {
   shownOnCaniuse: boolean;
   citedByWebFeatures: boolean;
   link: string | null;
-  notes: "";
 }
 
 function burndownEntries(): BurndownEntry[] {
@@ -49,7 +48,6 @@ function burndownEntries(): BurndownEntry[] {
         link: feature.shown
           ? formatLink(`https://caniuse.com/${id}`, feature.title)
           : null,
-        notes: "",
       });
     }
   } finally {

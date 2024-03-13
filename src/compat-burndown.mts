@@ -32,7 +32,6 @@ export interface BurndownEntry {
   citedByWebFeatures: boolean | null;
   computedBaselineLowDate: string | null | "unresolved";
   computedBaselineHighDate: string | null | "unresolved";
-  notes: "";
 }
 
 function toBurndownEntry(compatKey: string): BurndownEntry {
@@ -61,7 +60,6 @@ function toBurndownEntry(compatKey: string): BurndownEntry {
     citedByWebFeatures: compatKeysCitedByWebFeatures.has(compatKey),
     computedBaselineLowDate,
     computedBaselineHighDate,
-    notes: "",
   };
 }
 
