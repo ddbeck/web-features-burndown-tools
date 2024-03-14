@@ -113,7 +113,7 @@ export function getInventory(commitHash?: string): Inventory {
 }
 
 function getInventoryViaClone(commitHash: string): Inventory {
-  const tempDir = getTempDir();
+  const tempDir = getTempDir(); // TODO: do this is a known, nearby path instead, then git pull the latest?
   const inTemp = (file: string, args: string[]) =>
     execaSync(file, args, { cwd: tempDir });
   try {
