@@ -1,13 +1,12 @@
 import { execaSync } from "execa";
 import { Temporal } from "@js-temporal/polyfill";
-import * as lite from "caniuse-lite";
 
 import { caniuseIds } from "./web-features.mjs";
 import { getTempDir } from "./temp.mjs";
 import { existsSync, rmSync } from "fs";
 import { join } from "path";
 import { stringify } from "csv-stringify/sync";
-import { version } from "./caniuse.mjs";
+import * as caniuse from "./caniuse.mjs";
 
 const caniuseIdsInWebFeatures = new Set(caniuseIds());
 
@@ -24,7 +23,7 @@ interface BurndownEntry {
 function burndownEntries(): BurndownEntry[] {
   const entries: BurndownEntry[] = [];
 
-  const caniuseLiteVersion = version();
+  const caniuseLiteVersion = caniuse.version();
   const caniuseSrc = new CaniuseGit();
 
   process.on("SIGINT", function () {
@@ -32,11 +31,10 @@ function burndownEntries(): BurndownEntry[] {
   });
 
   try {
-    for (const [id, data] of Object.entries(lite.features)) {
+    for (const [id, feature] of caniuse.entries()) {
       if (id.startsWith("mdn-")) {
         continue; // These are weird custom imports to caniuse-lite
       }
-      const feature = lite.feature(data);
       entries.push({
         caniuseLiteVersion,
         caniuseId: id,
