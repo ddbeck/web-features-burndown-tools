@@ -78,6 +78,7 @@ class CaniuseGit {
   }
 
   getAddedDateTime(id: string): Temporal.Instant | null {
+    // TODO: cache these results somewhere
     const jsonFile = join(this.tempDir, `features-json/${id}.json`);
     if (existsSync(jsonFile)) {
       const commitDates = execaSync(
@@ -112,10 +113,10 @@ function formatLink(url: string, title: string) {
   return `=HYPERLINK("${url}", "${title.replaceAll('"', '""')}")`;
 }
 
-console.log(
-  stringify(burndownEntries(), {
-    header: true,
+export function tsv() {
+  return stringify(burndownEntries(), {
+    header: false,
     delimiter: "\t",
     cast: { boolean: (b) => (b ? "TRUE" : "FALSE") },
-  }),
-);
+  });
+}

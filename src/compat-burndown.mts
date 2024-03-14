@@ -63,12 +63,10 @@ function toBurndownEntry(compatKey: string): BurndownEntry {
   };
 }
 
-const rows: BurndownEntry[] = compatKeys.map(toBurndownEntry);
-
-console.log(
-  stringify(rows, {
-    header: true,
+export function tsv(): string {
+  return stringify(compatKeys.map(toBurndownEntry), {
+    header: false,
     delimiter: "\t",
     cast: { boolean: (b) => (b ? "TRUE" : "FALSE") },
-  }),
-);
+  });
+}

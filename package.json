@@ -16,6 +16,7 @@
     "@types/better-sqlite3": "^7.6.8",
     "@types/caniuse-lite": "^1.0.5",
     "@types/node": "^18.19.11",
+    "@types/prompts": "^2.4.9",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "eslint": "^8.56.0",
@@ -27,12 +28,14 @@
     "@ddbeck/strict-browser-compat-data": "github:ddbeck/strict-browser-compat-data",
     "@js-temporal/polyfill": "^0.4.4",
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
-    "caniuse-lite": "^1.0.30001594",
+    "caniuse-lite": "^1.0.30001597",
     "canvas": "^2.11.2",
     "chart.js": "^4.4.1",
+    "clipboardy": "^4.0.0",
     "csv-parse": "^5.5.3",
     "csv-stringify": "^6.4.5",
     "execa": "^8.0.1",
-    "web-features": "^0.5.1-dev-20240305114509-19e6651"
+    "prompts": "^2.4.2",
+    "web-features": "^0.6.0-dev-20240314112103-5df6f1a"
   }
 }
