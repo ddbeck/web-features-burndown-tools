@@ -10,6 +10,19 @@ import * as compatBurndown from "../src/compat-burndown.mjs";
 import clipboard from "clipboardy";
 import { execa } from "execa";
 
+async function confirm(message: string) {
+  let gate = false;
+  while (gate === false) {
+    const { confirmed } = await prompts({
+      type: "confirm",
+      name: "confirmed",
+      message,
+      stdout: process.stderr,
+    });
+    gate = confirmed;
+  }
+}
+
 const bcdBurndownPasteTarget =
   "https://docs.google.com/spreadsheets/d/1RVgaq4ruHYeJvLCky-h2VAreRP5j_CKifaBvwYEhsL0/edit#gid=1279455993&range=A2";
 const caniuseBurndownPasteTarget =
@@ -48,71 +61,45 @@ console.warn(
   `Wrote: ${relative(process.cwd(), fileURLToPath(caniuseBurndownPath))}`,
 );
 
-let readyToCopyBcd = false;
-while (readyToCopyBcd === false) {
-  readyToCopyBcd = (
-    await prompts({
-      type: "confirm",
-      name: "ready",
-      message: "Are you ready to copy the BCD & MDN TSV to your clipboard?",
-      stdout: process.stderr,
-    })
-  ).ready;
-}
+await confirm("Are you ready to copy the BCD & MDN TSV to your clipboard?");
 
 await clipboard.write(bcdBurndownTsv);
 console.warn(`Open the sheet in your browser: ${bcdBurndownPasteTarget}`);
 console.warn("Paste your clipboard into cell A2.");
 
-let pastedBcd = false;
-while (pastedBcd === false) {
-  pastedBcd = (
-    await prompts({
-      type: "confirm",
-      name: "pastedBcd",
-      message: "Have you pasted the TSV into the BCD & MDN burndown?",
-      stdout: process.stderr,
-    })
-  ).pastedBcd;
-}
+await confirm("Have you pasted the TSV into the BCD & MDN burndown?");
 
 await execa("git", ["add", `${fileURLToPath(bcdBurndownPath)}`], {
   stdio: "inherit",
   verbose: true,
 });
 
-let readyToCopyCaniuse = false;
-while (readyToCopyCaniuse === false) {
-  readyToCopyCaniuse = (
-    await prompts({
-      type: "confirm",
-      name: "ready",
-      message: "Are you ready to copy the caniuse TSV to your clipboard?",
-      stdout: process.stderr,
-    })
-  ).ready;
-}
+console.warn(
+  "Now it's time to update the ranges in the filter views for this sheet.",
+);
+await confirm(
+  "Have you updated the ranges for every filter view on this sheet?",
+);
+
+confirm("Are you ready to copy the caniuse TSV to your clipboard?");
 
 await clipboard.write(caniuseBurndownTsv);
 console.warn(`Open the sheet in your browser: ${caniuseBurndownPasteTarget}`);
 console.warn("Paste into cell A2");
 
-let pastedCaniuse = false;
-while (pastedCaniuse === false) {
-  pastedCaniuse = (
-    await prompts({
-      type: "confirm",
-      name: "pasted",
-      message: "Have you pasted the TSV into the caniuse burndown?",
-      stdout: process.stderr,
-    })
-  ).pasted;
-}
+await confirm("Have you pasted the TSV into the caniuse burndown?");
 
 await execa("git", ["add", `${fileURLToPath(caniuseBurndownPath)}`], {
   stdio: "inherit",
   verbose: true,
 });
+
+console.warn(
+  "Now it's time to update the ranges in the filter views for this sheet.",
+);
+await confirm(
+  "Have you updated the ranges for every filter view on this sheet?",
+);
 
 await execa("git", ["status"], { stdio: "inherit", verbose: true });
 
@@ -131,7 +118,8 @@ if (readyToCommit) {
 } else {
   console.warn("Warning: commit abandoned! Changes are still staged!");
   console.warn("Run `git status` for information.");
+  console.warn(
+    "Run `git restore --staged --worktree tsvs/` to abandon the changes.",
+  );
   process.exit(1);
 }
-
-// TODO: add prompts for fixing filter view ranges

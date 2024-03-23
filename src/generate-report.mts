@@ -52,7 +52,8 @@ function calculateProgress(
         Temporal.Now.zonedDateTimeISO(Temporal.Now.timeZoneId()).toString(),
     ),
     bcdVersion: bcd.version,
-    mdnContentCommitHash: mdn.getInventory(mdnContentHash).commitHash,
+    mdnContentCommitHash: new mdn.MdnContentGit().getInventory(mdnContentHash)
+      .commitHash,
     webFeaturesVersion: webFeaturesData.version(),
     caniuseLiteVersion: caniuseData.version(),
   };
@@ -72,7 +73,7 @@ function calculateProgress(
   };
 
   const mdnContent: ProgressReport["mdnContent"] = {
-    compatKeysCited: mdn.compatKeys().length,
+    compatKeysCited: new mdn.MdnContentGit().compatKeys().length,
     compatKeysCitedChange: null,
   };
 

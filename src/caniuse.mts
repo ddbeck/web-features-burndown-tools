@@ -2,7 +2,7 @@ import { Temporal } from "@js-temporal/polyfill";
 import assert from "assert";
 import * as lite from "caniuse-lite";
 import { execaSync } from "execa";
-import { existsSync, readFileSync, rmSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { join } from "path";
 
@@ -130,7 +130,10 @@ export class CaniuseGit {
         throw new Error("This should never happen");
       }
       const instant = Temporal.Instant.from(firstLine);
+
       this.cache.set(id, instant);
+      this.serializeCache();
+
       return instant;
     }
     console.warn(`caniuse: ${id} has no corresponding JSON in ${jsonFile}`);
@@ -169,7 +172,6 @@ export class CaniuseGit {
       result.set(id, Temporal.Instant.from(created));
     }
 
-    rmSync(this.cachePath);
     return result;
   }
 }
