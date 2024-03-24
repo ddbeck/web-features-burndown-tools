@@ -156,7 +156,10 @@ export class MdnContentGit {
     for (const [hash, inventory] of this.cache.entries()) {
       serializable.push([hash, inventory]);
     }
-    const json = JSON.stringify(serializable, undefined, 2);
+
+    // This is a workaround to avoid `RangeError: Invalid string length` OOM error from v8
+    const json =
+      "[" + serializable.map((el) => JSON.stringify(el)).join(",") + "]";
     writeFileSync(this.cachePath, json, { encoding: "utf-8" });
   }
 
