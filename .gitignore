@@ -1,7 +1,8 @@
-.mdn-content
-.mdn-content-inventory-cache.json
 .caniuse
 .caniuse-cache.json
+.mdn-content
+.mdn-content-inventory-cache.json
 *.csv
 burndown.db
 node_modules
+reports

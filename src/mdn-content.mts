@@ -1,7 +1,7 @@
 import { parse } from "csv-parse/sync";
 import { execaSync } from "execa";
 import assert from "node:assert";
-import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 interface Inventory {
@@ -93,6 +93,7 @@ export class MdnContentGit {
     const inRepo = (file: string, args: string[]) =>
       execaSync(file, args, { cwd: this.repoPath, stdio: ["inherit", "pipe"] });
 
+    inRepo("git", ["fetch", "origin", "main"]);
     inRepo("git", ["checkout", commitHash]);
     const commitDate = inRepo("git", [
       "show",

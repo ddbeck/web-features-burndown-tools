@@ -2,7 +2,7 @@ import { Temporal } from "@js-temporal/polyfill";
 import { execaSync } from "execa";
 
 const DATE = Temporal.Instant.from(
-  "2023-10-01T00:00:00.000Z",
+  "2023-09-28T00:00:00.000Z",
 ).toZonedDateTimeISO(Temporal.Now.timeZoneId());
 
 function npmReleases(pkg: string) {
@@ -11,12 +11,11 @@ function npmReleases(pkg: string) {
     version: string,
     dt: string,
   ][];
-  const releasesDts = releases.map<[string, Temporal.ZonedDateTime]>(
-    ([version, dt]) => [
-      version,
-      Temporal.Instant.from(dt).toZonedDateTimeISO(Temporal.Now.timeZoneId()),
-    ],
-  );
+  const releasesDts = releases
+    .map<
+      [string, Temporal.ZonedDateTime]
+    >(([version, dt]) => [version, Temporal.Instant.from(dt).toZonedDateTimeISO(Temporal.Now.timeZoneId())])
+    .filter(([version]) => version !== "created" && version !== "modified");
   releasesDts.sort((a, b) => Temporal.ZonedDateTime.compare(a[1], b[1]));
   return releasesDts;
 }
@@ -80,7 +79,7 @@ while (Temporal.ZonedDateTime.compare(target, now) < 1) {
     target,
   );
 
-  execaSync("npx", ["tsx", "./src/InitialReport.mts"], {
+  execaSync("npx", ["tsx", "./src/generate-report.mts"], {
     env: { MDN_CONTENT_HASH: mdnContentHash, REPORT_DATE: target.toString() },
     stdio: "inherit",
   });

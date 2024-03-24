@@ -4,9 +4,8 @@ import * as bcd from "./browser-compat-data.mjs";
 import * as caniuseData from "./caniuse.mjs";
 import * as mdn from "./mdn-content.mjs";
 import * as webFeaturesData from "./web-features.mjs";
-import { readFileSync, readdirSync, writeFileSync } from "fs";
-import { join } from "path";
 import { fileURLToPath } from "url";
+import { writeFileSync } from "fs";
 
 export interface ProgressReport {
   meta: {
@@ -19,41 +18,32 @@ export interface ProgressReport {
 
   browserCompatData: {
     keys: number;
-    keysChange: number | null;
   };
 
   mdnContent: {
     compatKeysCited: number;
-    compatKeysCitedChange: number | null;
   };
 
   caniuse: {
     ids: number;
-    idsChange: number | null;
   };
 
   webFeatures: {
     ids: number;
-    idsChange: number | null;
     compatKeysCited: number;
-    compatKeysCitedChange: number | null;
     caniuseIdsCited: number;
-    caniuseIdsCitedChange: number | null;
   };
 }
 
-function calculateProgress(
-  previous?: ProgressReport,
-  mdnContentHash?: string,
-): ProgressReport {
+function calculateProgress(mdnContentHash?: string): ProgressReport {
+  const mdnContentGit = new mdn.MdnContentGit();
   const meta: ProgressReport["meta"] = {
     date: Temporal.ZonedDateTime.from(
       process.env["REPORT_DATE"] ??
         Temporal.Now.zonedDateTimeISO(Temporal.Now.timeZoneId()).toString(),
     ),
     bcdVersion: bcd.version,
-    mdnContentCommitHash: new mdn.MdnContentGit().getInventory(mdnContentHash)
-      .commitHash,
+    mdnContentCommitHash: mdnContentGit.getInventory(mdnContentHash).commitHash,
     webFeaturesVersion: webFeaturesData.version(),
     caniuseLiteVersion: caniuseData.version(),
   };
@@ -69,43 +59,23 @@ function calculateProgress(
       "svg",
       "webassembly",
     ]).length,
-    keysChange: null,
   };
 
   const mdnContent: ProgressReport["mdnContent"] = {
-    compatKeysCited: new mdn.MdnContentGit().compatKeys().length,
-    compatKeysCitedChange: null,
+    compatKeysCited: mdnContentGit.compatKeys(
+      mdnContentHash ? { commitHash: mdnContentHash } : undefined,
+    ).length,
   };
 
   const caniuse: ProgressReport["caniuse"] = {
     ids: caniuseData.ids().length,
-    idsChange: null,
   };
 
   const webFeatures: ProgressReport["webFeatures"] = {
     ids: webFeaturesData.ids().length,
-    idsChange: null,
     compatKeysCited: webFeaturesData.compatKeys().length,
-    compatKeysCitedChange: null,
     caniuseIdsCited: webFeaturesData.caniuseIds().length,
-    caniuseIdsCitedChange: null,
   };
-
-  if (typeof previous !== "undefined") {
-    browserCompatData.keysChange =
-      browserCompatData.keys - previous.browserCompatData.keys;
-
-    mdnContent.compatKeysCitedChange =
-      mdnContent.compatKeysCited - previous.mdnContent.compatKeysCited;
-
-    caniuse.idsChange = caniuse.ids - previous.caniuse.ids;
-
-    webFeatures.idsChange = webFeatures.ids - previous.webFeatures.ids;
-    webFeatures.compatKeysCitedChange =
-      webFeatures.compatKeysCited - previous.webFeatures.compatKeysCited;
-    webFeatures.caniuseIdsCitedChange =
-      webFeatures.caniuseIdsCited - previous.webFeatures.caniuseIdsCited;
-  }
 
   return {
     meta,
@@ -130,23 +100,6 @@ function getMDNContentHash(): string | undefined {
   return process.env["MDN_CONTENT_HASH"];
 }
 
-function getPreviousReport(): ProgressReport | undefined {
-  const reportsDir = getReportsDir();
-  const files = readdirSync(reportsDir);
-  files.sort();
-  const lastFile = files.at(-1);
-  if (!lastFile) {
-    console.warn(
-      "Previous report not found! Creating an initial report instead.",
-    );
-    return undefined;
-  }
-  const source = readFileSync(join(reportsDir, lastFile), {
-    encoding: "utf-8",
-  });
-  return parseReport(source);
-}
-
 function replacer(_key: string, value: unknown) {
   if (value instanceof Temporal.ZonedDateTime) {
     return value.toString();
@@ -166,14 +119,11 @@ export function parseReport(src: string): ProgressReport {
 }
 
 function main() {
-  const previous = getPreviousReport();
   const dest = getReportsDir();
 
-  console.warn(`Using previous report: ${previous}`);
   console.warn(`Using mdn/content commit: ${getMDNContentHash()}`);
+  const result = calculateProgress(getMDNContentHash());
   console.warn(`Writing reports to: ${getReportsDir()}`);
-
-  const result = calculateProgress(previous, getMDNContentHash());
 
   writeFileSync(
     `${dest}/${result.meta.date.toPlainDateTime().toString().replaceAll(/[.:]/g, "")}.json`,
