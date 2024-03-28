@@ -39,15 +39,19 @@ function main() {
   const end = Temporal.PlainDate.from(toReport.meta.date);
   const duration = start.until(end);
 
-  console.log(formatSourcesTable(comp));
+  console.log(formatSourcesTable(fromReport, comp));
   console.log();
-  console.log(formatWebFeaturesTable(comp));
+  console.log(formatWebFeaturesTable(fromReport, toReport, comp));
   console.log();
   console.log(`From ${start} to ${end} (${duration.total("day")} days)`);
 }
 
 function compare(a: ProgressReport, b: ProgressReport) {
   return {
+    meta: {
+      startDate: Temporal.PlainDate.from(a.meta.date),
+      endDate: Temporal.PlainDate.from(b.meta.date),
+    },
     browserCompatData: {
       count: b.browserCompatData.keys,
       citedByWebFeatures: b.webFeatures.compatKeysCited,
@@ -56,6 +60,8 @@ function compare(a: ProgressReport, b: ProgressReport) {
       citedByWebFeaturesChangedRatio:
         (b.browserCompatData.keys - a.browserCompatData.keys) /
         a.browserCompatData.keys,
+      coverageByWebFeatures:
+        b.webFeatures.compatKeysCited / b.browserCompatData.keys,
     },
     caniuse: {
       count: b.caniuse.ids,
@@ -65,6 +71,7 @@ function compare(a: ProgressReport, b: ProgressReport) {
       citedByWebFeaturesChangedRatio:
         (b.webFeatures.caniuseIdsCited - a.webFeatures.caniuseIdsCited) /
         a.caniuse.ids,
+      coverageByWebFeatures: b.webFeatures.caniuseIdsCited / b.caniuse.ids,
     },
     webFeatures: {
       count: b.webFeatures.ids,
@@ -75,36 +82,75 @@ function compare(a: ProgressReport, b: ProgressReport) {
   };
 }
 
-function formatSourcesTable(c: ReturnType<typeof compare>): string {
+function formatSourcesTable(
+  a: ProgressReport,
+  c: ReturnType<typeof compare>,
+): string {
   const table = [
-    ["Source", "Count", "Cited by web-features", "Change", "%"],
     [
-      "@mdn/browser-compat-data keys",
-      c.browserCompatData.count,
+      "",
+      `Before (${c.meta.startDate})`,
+      `After (${c.meta.endDate})`,
+      `Net`,
+      `Change (%)`,
+    ],
+    [
+      "features in web-features",
+      a.webFeatures.ids,
+      c.webFeatures.count,
+      c.webFeatures.countChangedAbsolute,
+      formatChange(c.webFeatures.countChangedRatio),
+    ],
+    [
+      "compat keys mapped to web-features",
+      a.webFeatures.compatKeysCited,
       c.browserCompatData.citedByWebFeatures,
       c.browserCompatData.citedByWebFeaturesChangedAbsolute,
       formatChange(c.browserCompatData.citedByWebFeaturesChangedRatio),
     ],
     [
-      "caniuse features",
-      c.caniuse.count,
+      "caniuse IDs in web-features",
+      a.webFeatures.caniuseIdsCited,
       c.caniuse.citedByWebFeatures,
       c.caniuse.citedByWebFeaturesChangedAbsolute,
       formatChange(c.caniuse.citedByWebFeaturesChangedRatio),
     ],
   ].map((row) => row.map((cell) => `${cell}`));
 
-  return markdownTable(table);
+  return markdownTable(table, { align: ["l", "r", "r", "r", "r"] });
 }
 
-function formatWebFeaturesTable(c: ReturnType<typeof compare>): string {
+function formatWebFeaturesTable(
+  a: ProgressReport,
+  b: ProgressReport,
+  c: ReturnType<typeof compare>,
+): string {
   return markdownTable(
     [
-      ["web-features feature count", "Change", "%"],
+      ["Coverage", "Before", "Before %", "After", "After %", "Change (points)"],
       [
-        c.webFeatures.count,
-        c.webFeatures.countChangedAbsolute,
-        formatChange(c.webFeatures.countChangedRatio),
+        "caniuse IDs",
+        `${a.webFeatures.caniuseIdsCited} of ${a.caniuse.ids}`,
+        formatPercentage(a.webFeatures.caniuseIdsCited / a.caniuse.ids),
+        `${b.webFeatures.caniuseIdsCited} of ${b.caniuse.ids}`,
+        formatPercentage(c.caniuse.coverageByWebFeatures),
+        formatChange(
+          c.caniuse.coverageByWebFeatures -
+            a.webFeatures.caniuseIdsCited / a.caniuse.ids,
+        ),
+      ],
+      [
+        "browser-compat-data keys",
+        `${a.webFeatures.compatKeysCited} of ${a.browserCompatData.keys}`,
+        formatPercentage(
+          a.webFeatures.compatKeysCited / a.browserCompatData.keys,
+        ),
+        `${b.webFeatures.compatKeysCited} of ${b.browserCompatData.keys}`,
+        formatPercentage(c.browserCompatData.coverageByWebFeatures),
+        formatChange(
+          c.browserCompatData.coverageByWebFeatures -
+            a.webFeatures.compatKeysCited / a.browserCompatData.keys,
+        ),
       ],
     ].map((row) => row.map((cell) => `${cell}`)),
   );
@@ -122,6 +168,10 @@ function sign(number: number) {
 
 function formatChange(number: number) {
   return `${sign(number)}${(number * 100).toFixed(2)}%`;
+}
+
+function formatPercentage(number: number) {
+  return `${(number * 100).toFixed(2)}%`;
 }
 
 if (import.meta.url.startsWith("file:")) {

@@ -1,8 +1,12 @@
 import { Temporal } from "@js-temporal/polyfill";
 import { execaSync } from "execa";
 
+// const DATE = Temporal.Instant.from(
+//   "2023-09-28T00:00:00.000Z",
+// ).toZonedDateTimeISO(Temporal.Now.timeZoneId());
+
 const DATE = Temporal.Instant.from(
-  "2023-09-28T00:00:00.000Z",
+  "2024-03-23T00:00:00.000Z",
 ).toZonedDateTimeISO(Temporal.Now.timeZoneId());
 
 function npmReleases(pkg: string) {
@@ -83,5 +87,5 @@ while (Temporal.ZonedDateTime.compare(target, now) < 1) {
     env: { MDN_CONTENT_HASH: mdnContentHash, REPORT_DATE: target.toString() },
     stdio: "inherit",
   });
-  target = target.add({ weeks: 1 });
+  target = target.add({ days: 1 });
 }

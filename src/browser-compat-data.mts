@@ -5,6 +5,40 @@ import { browserCompatData } from "@ddbeck/strict-browser-compat-data";
 export const commitHash = getPackageHash();
 export const version = getVersion();
 
+// export class BrowserCompatData {
+//   readonly viaImport: boolean;
+//   readonly version: string;
+//   readonly hash?: string;
+
+//   constructor(opts?: { version: string } | { hash: string }) {
+//     if (opts === undefined) {
+//       this.viaImport = true;
+//       // TODO: set this.version
+//       // TODO: set this.hash
+//       // TODO: use data from node_modules
+//       // TODO: new Compat()
+//       return;
+//     }
+//     this.viaImport = false;
+
+//     if ("version" in opts) {
+//       this.version = opts.version;
+//       // TODO: set this.hash
+//       // TODO: use data from download
+//       // TODO: new Compat(<data>)
+//       return;
+//     }
+
+//     if ("hash" in opts) {
+//       this.hash = opts.hash;
+//       // TODO: this.version
+//       // TODO: use data from Git build
+//       // TODO: new Compat(<data>)
+//       return;
+//     }
+//   }
+// }
+
 export function compatKeys(entryPoints: string[]) {
   const result = [];
   for (const { path } of browserCompatData.walk(
@@ -28,5 +62,9 @@ function getPackageHash(): string {
 function getVersion(): string {
   const { stdout } = execaSync("npm", ["list", "--json"]);
   const { dependencies } = JSON.parse(stdout);
-  return dependencies["@mdn/browser-compat-data"].version;
+  const hash = dependencies["@mdn/browser-compat-data"].version;
+  if (hash === undefined) {
+    throw Error("Failed to get hash for @mdn/browser-compat-data");
+  }
+  return hash;
 }

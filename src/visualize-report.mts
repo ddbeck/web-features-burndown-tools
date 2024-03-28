@@ -19,7 +19,11 @@ const reports = (() => {
       parseReport(readFileSync(join(reportsDir, f), { encoding: "utf-8" })),
     );
   }
-  return reports;
+
+  // Get thursdays only
+  const thursdays = reports.filter((r) => r.meta.date.dayOfWeek === 4);
+
+  return thursdays;
 })();
 
 const CaniuseChartData = {
