@@ -18,7 +18,7 @@ function npmReleases(pkg: string) {
   const releasesDts = releases
     .map<
       [string, Temporal.ZonedDateTime]
-    >(([version, dt]) => [version, Temporal.Instant.from(dt).toZonedDateTimeISO(Temporal.Now.timeZoneId())])
+    >(([version, dt]) => [version, Temporal.Instant.from(dt).toZonedDateTimeISO("UTC")])
     .filter(([version]) => version !== "created" && version !== "modified");
   releasesDts.sort((a, b) => Temporal.ZonedDateTime.compare(a[1], b[1]));
   return releasesDts;
@@ -65,7 +65,7 @@ function findNearestCommit(
   return hash;
 }
 
-const now = Temporal.Now.zonedDateTimeISO(Temporal.Now.timeZoneId());
+const now = Temporal.Now.zonedDateTimeISO("UTC");
 let target = DATE;
 
 while (Temporal.ZonedDateTime.compare(target, now) < 1) {
