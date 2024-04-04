@@ -34,136 +34,116 @@ function main() {
     readFileSync(to, { encoding: "utf-8" }),
   ) as ProgressReport;
 
-  const comp = compare(fromReport, toReport);
   const start = Temporal.PlainDate.from(fromReport.meta.date);
   const end = Temporal.PlainDate.from(toReport.meta.date);
   const duration = start.until(end);
 
-  console.log(formatSourcesTable(fromReport, comp));
+  console.log(formatSourcesTable(fromReport, toReport));
   console.log();
-  console.log(formatWebFeaturesTable(fromReport, toReport, comp));
+  console.log(formatCoverageTable(fromReport, toReport));
   console.log();
   console.log(`From ${start} to ${end} (${duration.total("day")} days)`);
 }
 
-function compare(a: ProgressReport, b: ProgressReport) {
-  return {
-    meta: {
-      startDate: Temporal.PlainDate.from(a.meta.date),
-      endDate: Temporal.PlainDate.from(b.meta.date),
-    },
-    browserCompatData: {
-      count: b.browserCompatData.keys,
-      citedByWebFeatures: b.webFeatures.compatKeysCited,
-      citedByWebFeaturesChangedAbsolute:
-        b.browserCompatData.keys - a.browserCompatData.keys,
-      citedByWebFeaturesChangedRatio:
-        (b.browserCompatData.keys - a.browserCompatData.keys) /
-        a.browserCompatData.keys,
-      coverageByWebFeatures:
-        b.webFeatures.compatKeysCited / b.browserCompatData.keys,
-    },
-    caniuse: {
-      count: b.caniuse.ids,
-      citedByWebFeatures: b.webFeatures.caniuseIdsCited,
-      citedByWebFeaturesChangedAbsolute:
-        b.webFeatures.caniuseIdsCited - a.webFeatures.caniuseIdsCited,
-      citedByWebFeaturesChangedRatio:
-        (b.webFeatures.caniuseIdsCited - a.webFeatures.caniuseIdsCited) /
-        a.caniuse.ids,
-      coverageByWebFeatures: b.webFeatures.caniuseIdsCited / b.caniuse.ids,
-    },
-    webFeatures: {
-      count: b.webFeatures.ids,
-      countChangedAbsolute: b.webFeatures.ids - a.webFeatures.ids,
-      countChangedRatio:
-        (b.webFeatures.ids - a.webFeatures.ids) / a.webFeatures.ids,
-    },
-  };
+function relativeChange(before: number, after: number): string {
+  return formatChange((after - before) / before);
 }
 
-function formatSourcesTable(
-  a: ProgressReport,
-  c: ReturnType<typeof compare>,
-): string {
+function formatSourcesTable(a: ProgressReport, b: ProgressReport): string {
   const table = [
     [
       "",
-      `Before (${c.meta.startDate})`,
-      `After (${c.meta.endDate})`,
+      `Before (${Temporal.PlainDate.from(a.meta.date)})`,
+      `After (${Temporal.PlainDate.from(b.meta.date)})`,
       `Net`,
       `Change (%)`,
     ],
     [
       "features in web-features",
-      a.webFeatures.ids,
-      c.webFeatures.count,
-      c.webFeatures.countChangedAbsolute,
-      formatChange(c.webFeatures.countChangedRatio),
+      a.webFeatures.ids.length,
+      b.webFeatures.ids.length,
+      formatNet(b.webFeatures.ids.length - a.webFeatures.ids.length),
+      relativeChange(a.webFeatures.ids.length, b.webFeatures.ids.length),
     ],
     [
       "compat keys mapped to web-features",
-      a.webFeatures.compatKeysCited,
-      c.browserCompatData.citedByWebFeatures,
-      c.browserCompatData.citedByWebFeaturesChangedAbsolute,
-      formatChange(c.browserCompatData.citedByWebFeaturesChangedRatio),
+      a.webFeatures.mdnBrowserCompatDataKeys.length,
+      b.webFeatures.mdnBrowserCompatDataKeys.length,
+      formatNet(
+        b.webFeatures.mdnBrowserCompatDataKeys.length -
+          a.webFeatures.mdnBrowserCompatDataKeys.length,
+      ),
+      relativeChange(
+        a.webFeatures.mdnBrowserCompatDataKeys.length,
+        b.webFeatures.mdnBrowserCompatDataKeys.length,
+      ),
     ],
     [
       "caniuse IDs in web-features",
-      a.webFeatures.caniuseIdsCited,
-      c.caniuse.citedByWebFeatures,
-      c.caniuse.citedByWebFeaturesChangedAbsolute,
-      formatChange(c.caniuse.citedByWebFeaturesChangedRatio),
+      a.webFeatures.caniuseIds.length,
+      b.webFeatures.caniuseIds.length,
+      formatNet(
+        b.webFeatures.caniuseIds.length - a.webFeatures.caniuseIds.length,
+      ),
+      relativeChange(
+        a.webFeatures.caniuseIds.length,
+        b.webFeatures.caniuseIds.length,
+      ),
     ],
   ].map((row) => row.map((cell) => `${cell}`));
 
   return markdownTable(table, { align: ["l", "r", "r", "r", "r"] });
 }
 
-function formatWebFeaturesTable(
-  a: ProgressReport,
-  b: ProgressReport,
-  c: ReturnType<typeof compare>,
-): string {
+function formatCoverageTable(a: ProgressReport, b: ProgressReport): string {
   return markdownTable(
     [
       ["Coverage", "Before", "Before %", "After", "After %", "Change (points)"],
       [
         "caniuse IDs",
-        `${a.webFeatures.caniuseIdsCited} of ${a.caniuse.ids}`,
-        formatPercentage(a.webFeatures.caniuseIdsCited / a.caniuse.ids),
-        `${b.webFeatures.caniuseIdsCited} of ${b.caniuse.ids}`,
-        formatPercentage(c.caniuse.coverageByWebFeatures),
+        `${a.webFeatures.caniuseIds.length} of ${a.caniuse.ids.length}`,
+        formatPercentage(
+          a.webFeatures.caniuseIds.length / a.caniuse.ids.length,
+        ),
+        `${b.webFeatures.caniuseIds.length} of ${b.caniuse.ids.length}`,
+        formatPercentage(
+          b.webFeatures.caniuseIds.length / b.caniuse.ids.length,
+        ),
         formatChange(
-          c.caniuse.coverageByWebFeatures -
-            a.webFeatures.caniuseIdsCited / a.caniuse.ids,
+          b.webFeatures.caniuseIds.length / b.caniuse.ids.length -
+            a.webFeatures.caniuseIds.length / a.caniuse.ids.length,
         ),
       ],
       [
         "browser-compat-data keys",
-        `${a.webFeatures.compatKeysCited} of ${a.browserCompatData.keys}`,
+        `${a.webFeatures.mdnBrowserCompatDataKeys.length} of ${a.browserCompatData.keys.length}`,
         formatPercentage(
-          a.webFeatures.compatKeysCited / a.browserCompatData.keys,
+          a.webFeatures.mdnBrowserCompatDataKeys.length /
+            a.browserCompatData.keys.length,
         ),
-        `${b.webFeatures.compatKeysCited} of ${b.browserCompatData.keys}`,
-        formatPercentage(c.browserCompatData.coverageByWebFeatures),
+        `${b.webFeatures.mdnBrowserCompatDataKeys.length} of ${b.browserCompatData.keys.length}`,
+        formatPercentage(
+          b.webFeatures.mdnBrowserCompatDataKeys.length /
+            b.browserCompatData.keys.length,
+        ),
         formatChange(
-          c.browserCompatData.coverageByWebFeatures -
-            a.webFeatures.compatKeysCited / a.browserCompatData.keys,
+          b.webFeatures.mdnBrowserCompatDataKeys.length /
+            b.browserCompatData.keys.length -
+            a.webFeatures.mdnBrowserCompatDataKeys.length /
+              a.browserCompatData.keys.length,
         ),
       ],
     ].map((row) => row.map((cell) => `${cell}`)),
+    { align: ["l", "r", "r", "r", "r", "r"] },
   );
 }
 
 function sign(number: number) {
-  if (number > 0) {
-    return "+";
-  }
-  if (number < 0) {
-    return "-1";
-  }
-  return "±";
+  return number > 0 ? "+" : number < 0 ? "-" : "±";
+}
+
+function formatNet(number: number) {
+  return `${sign(number)}${number}`;
 }
 
 function formatChange(number: number) {

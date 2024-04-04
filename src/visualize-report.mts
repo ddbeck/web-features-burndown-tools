@@ -32,14 +32,14 @@ const CaniuseChartData = {
       label: "caniuse IDs",
       data: reports.map((report) => ({
         x: report.meta.date.toPlainDate().toString(),
-        y: report.caniuse.ids,
+        y: report.caniuse.ids.length,
       })),
     },
     {
       label: "caniuse IDs cited by web-features",
       data: reports.map((report) => ({
         x: report.meta.date.toPlainDate().toString(),
-        y: report.webFeatures.ids,
+        y: report.webFeatures.ids.length,
       })),
     },
   ],
@@ -51,14 +51,14 @@ const BCDChartData = {
       label: "BCD keys",
       data: reports.map((report) => ({
         x: report.meta.date.toPlainDate().toString(),
-        y: report.browserCompatData.keys,
+        y: report.browserCompatData.keys.length,
       })),
     },
     {
       label: "BCD keys cited by web-features",
       data: reports.map((report) => ({
         x: report.meta.date.toPlainDate().toString(),
-        y: report.webFeatures.compatKeysCited,
+        y: report.webFeatures.mdnBrowserCompatDataKeys.length,
       })),
     },
   ],
