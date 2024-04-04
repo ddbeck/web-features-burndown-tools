@@ -10,79 +10,93 @@ import { writeFileSync } from "fs";
 export interface ProgressReport {
   meta: {
     date: Temporal.ZonedDateTime;
-    bcdVersion: string;
+    browserCompatDataVersion: string;
+    caniuseLiteVersion: string;
     mdnContentCommitHash: string;
     webFeaturesVersion: string;
-    caniuseLiteVersion: string;
   };
 
   browserCompatData: {
-    keys: number;
+    keys: string[];
   };
 
   mdnContent: {
-    compatKeysCited: number;
+    browserCompatKeys: string[];
   };
 
   caniuse: {
-    ids: number;
+    ids: string[];
   };
 
   webFeatures: {
-    ids: number;
-    compatKeysCited: number;
-    caniuseIdsCited: number;
+    ids: string[];
+    mdnBrowserCompatDataKeys: string[]; // Unique citations!
+    caniuseIds: string[]; // Unique citations!
   };
+}
+
+function main() {
+  const dest = getReportsDir();
+
+  console.warn(`Using mdn/content commit: ${getMDNContentHash()}`);
+  const result = calculateProgress(getMDNContentHash());
+  console.warn(`Writing reports to: ${getReportsDir()}`);
+
+  writeFileSync(
+    `${dest}/${result.meta.date.toPlainDateTime().toString().replaceAll(/[.:]/g, "")}.json`,
+    JSON.stringify(result, replacer, 2),
+    {
+      encoding: "utf-8",
+    },
+  );
+}
+
+function unique<T>(items: Iterable<T>): Array<T> {
+  return [...new Set(items)];
 }
 
 function calculateProgress(mdnContentHash?: string): ProgressReport {
   const mdnContentGit = new mdn.MdnContentGit();
-  const meta: ProgressReport["meta"] = {
-    date: Temporal.ZonedDateTime.from(
-      process.env["REPORT_DATE"] ??
-        Temporal.Now.zonedDateTimeISO(Temporal.Now.timeZoneId()).toString(),
-    ),
-    bcdVersion: bcd.version,
-    mdnContentCommitHash: mdnContentGit.getInventory(mdnContentHash).commitHash,
-    webFeaturesVersion: webFeaturesData.version(),
-    caniuseLiteVersion: caniuseData.version(),
-  };
-
-  const browserCompatData: ProgressReport["browserCompatData"] = {
-    keys: bcd.compatKeys([
-      "api",
-      "css",
-      "html",
-      "http",
-      "javascript",
-      "mathml",
-      "svg",
-      "webassembly",
-    ]).length,
-  };
-
-  const mdnContent: ProgressReport["mdnContent"] = {
-    compatKeysCited: mdnContentGit.compatKeys(
-      mdnContentHash ? { commitHash: mdnContentHash } : undefined,
-    ).length,
-  };
-
-  const caniuse: ProgressReport["caniuse"] = {
-    ids: caniuseData.ids().length,
-  };
-
-  const webFeatures: ProgressReport["webFeatures"] = {
-    ids: webFeaturesData.ids().length,
-    compatKeysCited: webFeaturesData.compatKeys().length,
-    caniuseIdsCited: webFeaturesData.caniuseIds().length,
-  };
 
   return {
-    meta,
-    browserCompatData,
-    mdnContent,
-    caniuse,
-    webFeatures,
+    meta: {
+      date: Temporal.ZonedDateTime.from(
+        process.env["REPORT_DATE"] ??
+          Temporal.Now.zonedDateTimeISO("UTC").toString(),
+      ),
+      browserCompatDataVersion: bcd.version,
+      mdnContentCommitHash:
+        mdnContentGit.getInventory(mdnContentHash).commitHash,
+      webFeaturesVersion: webFeaturesData.version(),
+      caniuseLiteVersion: caniuseData.version(),
+    },
+    browserCompatData: {
+      keys: bcd.compatKeys([
+        "api",
+        "css",
+        "html",
+        "http",
+        "javascript",
+        "mathml",
+        "svg",
+        "webassembly",
+      ]),
+    },
+    mdnContent: {
+      browserCompatKeys: unique(
+        mdnContentGit.compatKeys(
+          mdnContentHash ? { commitHash: mdnContentHash } : undefined,
+        ),
+      ),
+    },
+    caniuse: {
+      ids: caniuseData.ids(),
+    },
+    webFeatures: {
+      ids: webFeaturesData.ids(),
+      mdnBrowserCompatDataKeys: unique(webFeaturesData.compatKeys()),
+      caniuseIds: unique(webFeaturesData.caniuseIds()),
+    },
   };
 }
 
@@ -116,22 +130,6 @@ function reviver(key: string, value: unknown) {
 
 export function parseReport(src: string): ProgressReport {
   return JSON.parse(src, reviver);
-}
-
-function main() {
-  const dest = getReportsDir();
-
-  console.warn(`Using mdn/content commit: ${getMDNContentHash()}`);
-  const result = calculateProgress(getMDNContentHash());
-  console.warn(`Writing reports to: ${getReportsDir()}`);
-
-  writeFileSync(
-    `${dest}/${result.meta.date.toPlainDateTime().toString().replaceAll(/[.:]/g, "")}.json`,
-    JSON.stringify(result, replacer, 2),
-    {
-      encoding: "utf-8",
-    },
-  );
 }
 
 if (import.meta.url.startsWith("file:")) {
