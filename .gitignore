@@ -2,6 +2,8 @@
 .caniuse-cache.json
 .mdn-content
 .mdn-content-inventory-cache.json
+bcd.png
+caniuse.png
 *.csv
 burndown.db
 node_modules
