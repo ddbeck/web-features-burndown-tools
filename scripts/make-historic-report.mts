@@ -82,7 +82,7 @@ while (Temporal.ZonedDateTime.compare(target, now) < 1) {
   }
 
   const mdnContentHash = findNearestCommit(
-    "../mdn-content-for-automation",
+    process.env["MDN_CONTENT_REPO_PATH"] ?? "./.mdn-content",
     target,
   );
 
