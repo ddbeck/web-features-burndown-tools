@@ -50,6 +50,9 @@ function findNearestCommit(
   target: Temporal.ZonedDateTime,
 ): string {
   const targetEnd = target.add({ seconds: 1 });
+  execaSync("git", ["fetch"], {
+    cwd: repoPath,
+  });
   const hash = execaSync(
     "git",
     ["rev-list", "-1", `--before=${targetEnd.toString()}`, `main`],
