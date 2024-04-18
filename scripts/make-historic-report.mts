@@ -1,13 +1,13 @@
 import { Temporal } from "@js-temporal/polyfill";
 import { execaSync } from "execa";
 
-// const DATE = Temporal.Instant.from(
-//   "2023-09-28T00:00:00.000Z",
-// ).toZonedDateTimeISO(Temporal.Now.timeZoneId());
+const TODAY = Temporal.Now.instant().toZonedDateTimeISO("UTC").startOfDay();
+const START_DATE = TODAY.subtract({ weeks: 2 });
 
-const DATE = Temporal.Instant.from(
-  "2024-03-23T00:00:00.000Z",
-).toZonedDateTimeISO(Temporal.Now.timeZoneId());
+// Note: If you want to generate all historic data from inception, then you probably want to replace the above with this:
+// const START_DATE = Temporal.Instant.from(
+//   "2023-09-28T00:00:00.000Z",
+// ).toZonedDateTimeISO("UTC");
 
 function npmReleases(pkg: string) {
   const { stdout } = execaSync("npm", ["view", pkg, "time", "--json"]);
@@ -69,7 +69,7 @@ function findNearestCommit(
 }
 
 const now = Temporal.Now.zonedDateTimeISO("UTC");
-let target = DATE;
+let target = START_DATE;
 
 while (Temporal.ZonedDateTime.compare(target, now) < 1) {
   const pkgs = ["@mdn/browser-compat-data", "web-features", "caniuse-lite"];
