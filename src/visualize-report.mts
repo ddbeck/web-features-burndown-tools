@@ -7,6 +7,7 @@ import {
   parseReport,
 } from "./generate-report.mjs";
 import { join } from "path";
+import { Temporal } from "@js-temporal/polyfill";
 
 const reports = (() => {
   const reportsDir = getReportsDir();
@@ -15,9 +16,16 @@ const reports = (() => {
 
   const reports: ProgressReport[] = [];
   for (const f of jsons) {
-    reports.push(
-      parseReport(readFileSync(join(reportsDir, f), { encoding: "utf-8" })),
+    const report = parseReport(
+      readFileSync(join(reportsDir, f), { encoding: "utf-8" }),
     );
+    if (
+      Temporal.ZonedDateTime.compare(
+        Temporal.ZonedDateTime.from("2024-01-01[UTC]"),
+        report.meta.date,
+      ) < 1
+    )
+      reports.push(report);
   }
 
   // Get thursdays only
