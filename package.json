@@ -28,7 +28,7 @@
     "@ddbeck/strict-browser-compat-data": "github:ddbeck/strict-browser-compat-data",
     "@js-temporal/polyfill": "^0.4.4",
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
-    "caniuse-lite": "^1.0.30001608",
+    "caniuse-lite": "^1.0.30001611",
     "canvas": "^2.11.2",
     "chart.js": "^4.4.1",
     "clipboardy": "^4.0.0",
@@ -37,7 +37,7 @@
     "execa": "^8.0.1",
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
-    "web-features": "^0.6.3-dev-20240410213933-d88ac27",
+    "web-features": "^0.6.3-dev-20240418131603-549bcd3",
     "yargs": "^17.7.2"
   }
 }
