@@ -1,6 +1,6 @@
 import { stringify } from "csv-stringify/sync";
 
-import { computeBaseline } from "@ddbeck/strict-browser-compat-data/baseline";
+import { computeBaseline } from "compute-baseline";
 
 import * as bcd from "./browser-compat-data.mjs";
 import * as mdn from "./mdn-content.mjs";

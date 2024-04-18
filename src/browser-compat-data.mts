@@ -1,6 +1,6 @@
 import { execaSync } from "execa";
 
-import { browserCompatData } from "@ddbeck/strict-browser-compat-data";
+import { Compat } from "compute-baseline/browser-compat-data";
 
 export const commitHash = getPackageHash();
 export const version = getVersion();
@@ -41,10 +41,8 @@ export const version = getVersion();
 
 export function compatKeys(entryPoints: string[]) {
   const result = [];
-  for (const { path } of browserCompatData.walk(
-    entryPoints,
-    new browserCompatData.Compat().data as any,
-  )) {
+  const compat = new Compat();
+  for (const { path } of compat.walk(entryPoints)) {
     result.push(path as string);
   }
   return result;
