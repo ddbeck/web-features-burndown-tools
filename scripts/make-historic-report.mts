@@ -78,7 +78,7 @@ while (Temporal.ZonedDateTime.compare(target, now) < 1) {
     const [version, dt] = findNearestRelease(npmReleases(pkg), target);
     console.warn(`Installing ${pkg}@${version} (${dt})`);
     const installArg = `${pkg}@${version}`;
-    execaSync("npm", ["install", installArg], { stdio: "inherit" });
+    execaSync("npm", ["--silent", "install", installArg], { stdio: "inherit" });
   }
 
   const mdnContentHash = findNearestCommit(
