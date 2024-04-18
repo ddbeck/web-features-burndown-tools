@@ -50,12 +50,12 @@ function findNearestCommit(
   target: Temporal.ZonedDateTime,
 ): string {
   const targetEnd = target.add({ seconds: 1 });
-  execaSync("git", ["fetch"], {
+  execaSync("git", ["fetch", "origin"], {
     cwd: repoPath,
   });
   const hash = execaSync(
     "git",
-    ["rev-list", "-1", `--before=${targetEnd.toString()}`, `main`],
+    ["rev-list", "-1", `--before=${targetEnd.toString()}`, `origin/main`],
     { cwd: repoPath },
   )
     .stdout.split("\n")
@@ -92,3 +92,10 @@ while (Temporal.ZonedDateTime.compare(target, now) < 1) {
   });
   target = target.add({ days: 1 });
 }
+
+console.log("Undoing changes to `package.json` and `package-lock.json`.");
+execaSync(
+  "git",
+  ["restore", "--worktree", "package.json", "package-lock.json"],
+  { stdio: "inherit" },
+);
