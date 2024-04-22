@@ -47,12 +47,11 @@ const CaniuseChartData = {
       label: "caniuse IDs cited by web-features",
       data: reports.map((report) => ({
         x: report.meta.date.toPlainDate().toString(),
-        y: report.webFeatures.ids.length,
+        y: report.webFeatures.caniuseIds.length,
       })),
     },
   ],
 };
-
 const BCDChartData = {
   datasets: [
     {
