@@ -50,7 +50,9 @@ export function tsv(): string {
     } catch (err) {
       if (
         !(
-          err instanceof Error && err.message?.includes("Cannot expand support")
+          err instanceof Error &&
+          (err.message?.includes("Cannot expand support") ||
+            err.message?.includes("contains no support data"))
         )
       ) {
         throw err;
