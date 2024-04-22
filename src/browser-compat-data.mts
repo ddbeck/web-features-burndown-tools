@@ -42,8 +42,8 @@ export const version = getVersion();
 export function compatKeys(entryPoints: string[]) {
   const result = [];
   const compat = new Compat();
-  for (const { path } of compat.walk(entryPoints)) {
-    result.push(path as string);
+  for (const feature of compat.walk(entryPoints)) {
+    result.push(feature.id);
   }
   return result;
 }
