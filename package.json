@@ -26,7 +26,7 @@
   "dependencies": {
     "@js-temporal/polyfill": "^0.4.4",
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
-    "caniuse-lite": "^1.0.30001611",
+    "caniuse-lite": "^1.0.30001612",
     "canvas": "^2.11.2",
     "chart.js": "^4.4.1",
     "clipboardy": "^4.0.0",
@@ -36,7 +36,7 @@
     "execa": "^8.0.1",
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
-    "web-features": "^0.6.3-dev-20240418152928-c9948a0",
+    "web-features": "^0.6.3-dev-20240422123334-c769fa2",
     "yargs": "^17.7.2"
   }
 }
