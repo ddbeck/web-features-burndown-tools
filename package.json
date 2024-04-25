@@ -26,6 +26,7 @@
   "dependencies": {
     "@js-temporal/polyfill": "^0.4.4",
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
+    "big-json": "^3.2.0",
     "caniuse-lite": "^1.0.30001612",
     "canvas": "^2.11.2",
     "chart.js": "^4.4.1",

@@ -1,7 +1,8 @@
+import { createStringifyStream } from "big-json";
 import { parse } from "csv-parse/sync";
 import { execaSync } from "execa";
 import assert from "node:assert";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { createWriteStream, existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 interface Inventory {
@@ -157,10 +158,17 @@ export class MdnContentGit {
       serializable.push([hash, inventory]);
     }
 
-    // This is a workaround to avoid `RangeError: Invalid string length` OOM error from v8
-    const json =
-      "[" + serializable.map((el) => JSON.stringify(el)).join(",") + "]";
-    writeFileSync(this.cachePath, json, { encoding: "utf-8" });
+    const cacheStream = createWriteStream(this.cachePath);
+    const stringifyStream = createStringifyStream({
+      body: serializable,
+    });
+    stringifyStream.pipe(cacheStream);
+    stringifyStream.on("error", (err) => {
+      throw err;
+    });
+    stringifyStream.on("end", () => {
+      console.log(`Cached to ${this.cachePath}`);
+    });
   }
 
   deserializeCache(): MdnContentCache {
