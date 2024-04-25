@@ -36,7 +36,7 @@
     "execa": "^8.0.1",
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
-    "web-features": "^0.6.3-dev-20240422123334-c769fa2",
+    "web-features": "^0.7.0-dev-20240424161122-6dc9eb5",
     "yargs": "^17.7.2"
   }
 }
