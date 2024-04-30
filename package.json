@@ -27,7 +27,7 @@
     "@js-temporal/polyfill": "^0.4.4",
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
     "big-json": "^3.2.0",
-    "caniuse-lite": "^1.0.30001612",
+    "caniuse-lite": "^1.0.30001614",
     "canvas": "^2.11.2",
     "chart.js": "^4.4.1",
     "clipboardy": "^4.0.0",
@@ -37,7 +37,7 @@
     "execa": "^8.0.1",
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
-    "web-features": "^0.7.0-dev-20240424161122-6dc9eb5",
+    "web-features": "^0.7.0-dev-20240430105427-91c42b6",
     "yargs": "^17.7.2"
   }
 }
