@@ -139,7 +139,7 @@ function formatCoverageTable(a: ProgressReport, b: ProgressReport): string {
 }
 
 function sign(number: number) {
-  return number > 0 ? "+" : number < 0 ? "-" : "±";
+  return number > 0 ? "+" : number < 0 ? "" : "±";
 }
 
 function formatNet(number: number) {
