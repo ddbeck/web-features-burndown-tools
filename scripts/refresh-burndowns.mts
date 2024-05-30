@@ -1,14 +1,12 @@
-import { writeFile } from "fs/promises";
-import { join, relative } from "path";
-import { fileURLToPath } from "url";
-
-import prompts from "prompts";
 import { Temporal } from "@js-temporal/polyfill";
-
-import * as caniuseBurndown from "../src/caniuse-burndown.mjs";
-import * as compatBurndown from "../src/compat-burndown.mjs";
 import clipboard from "clipboardy";
 import { execa } from "execa";
+import { writeFile } from "fs/promises";
+import { join, relative } from "path";
+import prompts from "prompts";
+import { fileURLToPath } from "url";
+import * as caniuseBurndown from "../src/caniuse-burndown.mjs";
+import * as compatBurndown from "../src/compat-burndown.mjs";
 
 async function confirm(message: string) {
   let gate = false;
@@ -44,6 +42,8 @@ if (updatedSources === false) {
   console.warn("Run `npm run update-sources` then try again.");
   process.exit(1);
 }
+
+execa("git", ["add", "package-lock.json", "package.json"]);
 
 console.warn("Generating TSV for browser-compat-data and MDN burndown list.");
 console.warn("This will may a few minutes, please wait.");
