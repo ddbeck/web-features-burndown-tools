@@ -1,11 +1,11 @@
 import { Temporal } from "@js-temporal/polyfill";
 
+import { writeFileSync } from "fs";
+import { fileURLToPath } from "url";
 import * as bcd from "./browser-compat-data.mjs";
 import * as caniuseData from "./caniuse.mjs";
-import * as mdn from "./mdn-content.mjs";
+import * as mdn from "./sources/mdn-content-inventory.mjs";
 import * as webFeaturesData from "./web-features.mjs";
-import { fileURLToPath } from "url";
-import { writeFileSync } from "fs";
 
 export interface ProgressReport {
   meta: {
@@ -38,8 +38,7 @@ export interface ProgressReport {
 function main() {
   const dest = getReportsDir();
 
-  console.warn(`Using mdn/content commit: ${getMDNContentHash()}`);
-  const result = calculateProgress(getMDNContentHash());
+  const result = calculateProgress();
   console.warn(`Writing reports to: ${getReportsDir()}`);
 
   writeFileSync(
@@ -55,9 +54,7 @@ function unique<T>(items: Iterable<T>): Array<T> {
   return [...new Set(items)];
 }
 
-function calculateProgress(mdnContentHash?: string): ProgressReport {
-  const mdnContentGit = new mdn.MdnContentGit();
-
+function calculateProgress(): ProgressReport {
   return {
     meta: {
       date: Temporal.ZonedDateTime.from(
@@ -65,8 +62,7 @@ function calculateProgress(mdnContentHash?: string): ProgressReport {
           Temporal.Now.zonedDateTimeISO("UTC").toString(),
       ),
       browserCompatDataVersion: bcd.version,
-      mdnContentCommitHash:
-        mdnContentGit.getInventory(mdnContentHash).commitHash,
+      mdnContentCommitHash: mdn.metadata.commit,
       webFeaturesVersion: webFeaturesData.version(),
       caniuseLiteVersion: caniuseData.version(),
     },
@@ -83,11 +79,7 @@ function calculateProgress(mdnContentHash?: string): ProgressReport {
       ]),
     },
     mdnContent: {
-      browserCompatKeys: unique(
-        mdnContentGit.compatKeys(
-          mdnContentHash ? { commitHash: mdnContentHash } : undefined,
-        ),
-      ),
+      browserCompatKeys: unique(mdn.compatKeys),
     },
     caniuse: {
       ids: caniuseData.ids(),
@@ -105,13 +97,6 @@ export function getReportsDir(): string {
     throw Error("REPORTS_DIR environment variable not set");
   }
   return process.env["REPORTS_DIR"];
-}
-
-function getMDNContentHash(): string | undefined {
-  if (typeof process.env["MDN_CONTENT_HASH"] !== "string") {
-    return undefined;
-  }
-  return process.env["MDN_CONTENT_HASH"];
 }
 
 function replacer(_key: string, value: unknown) {

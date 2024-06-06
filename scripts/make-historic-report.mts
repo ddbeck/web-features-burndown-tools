@@ -1,4 +1,5 @@
 import { Temporal } from "@js-temporal/polyfill";
+import assert from "assert";
 import { execaSync } from "execa";
 
 const TODAY = Temporal.Now.instant().toZonedDateTimeISO("UTC").startOfDay();
@@ -45,27 +46,36 @@ function findNearestRelease(
   return nearest;
 }
 
-function findNearestCommit(
-  repoPath: string,
+function findNearestContentInventory(
+  releases: ReturnType<typeof npmReleases>,
   target: Temporal.ZonedDateTime,
-): string {
-  const targetEnd = target.add({ seconds: 1 });
-  execaSync("git", ["fetch", "origin"], {
-    cwd: repoPath,
-  });
-  const hash = execaSync(
-    "git",
-    ["rev-list", "-1", `--before=${targetEnd.toString()}`, `origin/main`],
-    { cwd: repoPath },
-  )
-    .stdout.split("\n")
-    .at(-1);
-  if (hash === undefined) {
-    throw new Error(
-      `Could not find commit nearest to ${target} in ${repoPath}`,
-    );
+) {
+  let nearest: (typeof releases)[0] | null = null;
+
+  for (const [version, dt] of releases) {
+    const [, buildinfo] = version.split("-");
+    assert(buildinfo);
+    const [yyymmdd] = buildinfo.split(".");
+    assert(yyymmdd);
+
+    const yyyymmddTarget = target.toString().slice(0, 10).replaceAll("-", "");
+
+    if (yyymmdd.localeCompare(yyyymmddTarget) <= 0) {
+      nearest = [version, dt];
+    } else {
+      break;
+    }
   }
-  return hash;
+
+  if (nearest === null) {
+    throw new Error(`Could not find release nearest to ${target}`);
+  }
+
+  return nearest;
+}
+
+function installNpmPackage(pkgSpec: string) {
+  execaSync("npm", ["--silent", "install", pkgSpec], { stdio: "inherit" });
 }
 
 const now = Temporal.Now.zonedDateTimeISO("UTC");
@@ -76,18 +86,18 @@ while (Temporal.ZonedDateTime.compare(target, now) < 1) {
 
   for (const pkg of pkgs) {
     const [version, dt] = findNearestRelease(npmReleases(pkg), target);
-    console.warn(`Installing ${pkg}@${version} (${dt})`);
-    const installArg = `${pkg}@${version}`;
-    execaSync("npm", ["--silent", "install", installArg], { stdio: "inherit" });
+    const pkgSpec = `${pkg}@${version}`;
+    console.warn(`Installing ${pkgSpec} (${dt})`);
+    installNpmPackage(pkgSpec);
   }
 
-  const mdnContentHash = findNearestCommit(
-    process.env["MDN_CONTENT_REPO_PATH"] ?? "./.mdn-content",
+  const [mdnContentRelease] = findNearestContentInventory(
+    npmReleases("@ddbeck/mdn-content-inventory"),
     target,
   );
-
+  installNpmPackage(`@ddbeck/mdn-content-inventory@${mdnContentRelease}`);
   execaSync("npx", ["tsx", "./src/generate-report.mts"], {
-    env: { MDN_CONTENT_HASH: mdnContentHash, REPORT_DATE: target.toString() },
+    env: { REPORT_DATE: target.toString() },
     stdio: "inherit",
   });
   target = target.add({ days: 1 });

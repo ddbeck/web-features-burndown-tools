@@ -3,7 +3,8 @@ import { stringify } from "csv-stringify/sync";
 import { computeBaseline } from "compute-baseline";
 
 import * as bcd from "./browser-compat-data.mjs";
-import * as mdn from "./mdn-content.mjs";
+import * as mdn from "./sources/mdn-content-inventory.mjs";
+import * as mdnTraffic from "./sources/mdn-traffic-spreadsheet.mjs";
 import * as webFeatures from "./web-features.mjs";
 
 export function tsv(): string {
@@ -19,12 +20,17 @@ export function tsv(): string {
   ]);
   const bcdCommitHash = bcd.commitHash;
 
-  const mdnContent = new mdn.MdnContentGit();
-
-  const compatKeysCitedByMDN = new Set(mdnContent.compatKeys());
-  const compatKeysCitedByMDNTop1000 = new Set(
-    mdnContent.compatKeys({ onlyTop1000Pages: true }),
-  );
+  const compatKeysCitedByMDN = new Set(mdn.compatKeys);
+  const compatKeysCitedByMDNTop1000 = (() => {
+    const top1000Slugs = new Set(mdnTraffic.slugsByTrafficRank().slice(0, 999));
+    const result: string[] = [];
+    for (const [slug, keys] of mdn.slugsToCompatKeys.entries()) {
+      if (top1000Slugs.has(slug)) {
+        result.push(...keys);
+      }
+    }
+    return new Set(result);
+  })();
   const compatKeysCitedByWebFeatures = new Set(webFeatures.compatKeys());
 
   interface BurndownEntry {
