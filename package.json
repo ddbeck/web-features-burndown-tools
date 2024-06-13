@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "npx eslint .",
     "update-sources": "npm install web-features@next github:mdn/browser-compat-data caniuse-lite@latest @ddbeck/mdn-content-inventory@latest",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -r tsx 'src/**/*.test.mts'"
   },
   "author": "Daniel D. Beck <daniel@ddbeck.com> (https://ddbeck.com)",
   "license": "UNLICENSED",
@@ -14,12 +14,14 @@
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.2",
     "@types/caniuse-lite": "^1.0.5",
+    "@types/mocha": "^10.0.6",
     "@types/node": "^18.19.11",
     "@types/prompts": "^2.4.9",
     "@types/yargs": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "eslint": "^8.56.0",
+    "mocha": "^10.4.0",
     "prettier": "^3.1.1",
     "tsx": "^4.7.0"
   },

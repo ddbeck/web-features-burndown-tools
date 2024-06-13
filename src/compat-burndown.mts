@@ -5,6 +5,7 @@ import { computeBaseline } from "compute-baseline";
 import * as bcd from "./browser-compat-data.mjs";
 import * as mdn from "./sources/mdn-content-inventory.mjs";
 import * as mdnTraffic from "./sources/mdn-traffic-spreadsheet.mjs";
+import { findlastIntroducedDate } from "./utils.mjs";
 import * as webFeatures from "./web-features.mjs";
 
 export function tsv(): string {
@@ -43,19 +44,25 @@ export function tsv(): string {
     computedBaselineLowDate: string | null | "unresolved";
     computedBaselineHighDate: string | null | "unresolved";
     engineCount: number;
+    lastIntroducedDate: string | null | "unresolved";
   }
 
   function toBurndownEntry(compatKey: string): BurndownEntry {
     let computedBaselineLowDate: string | null = "unresolved";
     let computedBaselineHighDate: string | null = "unresolved";
+    let lastIntroducedDate: string | null = "unresolved";
     let engineCount: number = 0;
+
+    let calculation;
     try {
-      const calculation = computeBaseline({
+      calculation = computeBaseline({
         compatKeys: [compatKey],
         checkAncestors: false,
       });
       computedBaselineLowDate = calculation.baseline_low_date;
       computedBaselineHighDate = calculation.baseline_high_date;
+      lastIntroducedDate =
+        findlastIntroducedDate(calculation)?.toString() ?? null;
       engineCount = countEngines(calculation);
     } catch (err) {
       if (
@@ -81,6 +88,7 @@ export function tsv(): string {
       computedBaselineLowDate,
       computedBaselineHighDate,
       engineCount,
+      lastIntroducedDate,
     };
   }
 
