@@ -24,11 +24,11 @@
     "tsx": "^4.7.0"
   },
   "dependencies": {
-    "@ddbeck/mdn-content-inventory": "^0.1.0-20240606.a80ebc0952",
+    "@ddbeck/mdn-content-inventory": "^0.1.0-20240613.af5eda87f5",
     "@js-temporal/polyfill": "^0.4.4",
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
     "big-json": "^3.2.0",
-    "caniuse-lite": "^1.0.30001629",
+    "caniuse-lite": "^1.0.30001633",
     "canvas": "^2.11.2",
     "chart.js": "^4.4.1",
     "clipboardy": "^4.0.0",
@@ -38,7 +38,7 @@
     "execa": "^8.0.1",
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
-    "web-features": "^0.8.5-dev-20240606082007-0532a7c",
+    "web-features": "^0.8.6-dev-20240613110807-2a8ab3c",
     "yargs": "^17.7.2"
   }
 }
