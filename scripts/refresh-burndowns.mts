@@ -16,6 +16,14 @@ async function confirm(message: string) {
       name: "confirmed",
       message,
       stdout: process.stderr,
+      onState: (state) => {
+        // handle sigint
+        if (state.aborted) {
+          process.nextTick(() => {
+            process.exit(0);
+          });
+        }
+      },
     });
     gate = confirmed;
   }
