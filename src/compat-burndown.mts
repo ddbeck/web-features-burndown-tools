@@ -39,6 +39,7 @@ export function tsv(): string {
     citedByMDNPage: boolean;
     citedByMDNTop1000Page: boolean;
     citedByWebFeatures: boolean | null;
+    isBaseline: boolean | null;
     computedBaselineLowDate: string | null | "unresolved";
     computedBaselineHighDate: string | null | "unresolved";
   }
@@ -71,6 +72,9 @@ export function tsv(): string {
       citedByMDNPage: compatKeysCitedByMDN.has(compatKey),
       citedByMDNTop1000Page: compatKeysCitedByMDNTop1000.has(compatKey),
       citedByWebFeatures: compatKeysCitedByWebFeatures.has(compatKey),
+      isBaseline:
+        typeof computedBaselineLowDate === "string" &&
+        computedBaselineLowDate !== "unresolved",
       computedBaselineLowDate,
       computedBaselineHighDate,
     };
