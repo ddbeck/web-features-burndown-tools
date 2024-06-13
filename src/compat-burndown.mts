@@ -42,11 +42,13 @@ export function tsv(): string {
     isBaseline: boolean | null;
     computedBaselineLowDate: string | null | "unresolved";
     computedBaselineHighDate: string | null | "unresolved";
+    engineCount: number;
   }
 
   function toBurndownEntry(compatKey: string): BurndownEntry {
     let computedBaselineLowDate: string | null = "unresolved";
     let computedBaselineHighDate: string | null = "unresolved";
+    let engineCount: number = 0;
     try {
       const calculation = computeBaseline({
         compatKeys: [compatKey],
@@ -54,6 +56,7 @@ export function tsv(): string {
       });
       computedBaselineLowDate = calculation.baseline_low_date;
       computedBaselineHighDate = calculation.baseline_high_date;
+      engineCount = countEngines(calculation);
     } catch (err) {
       if (
         !(
@@ -77,6 +80,7 @@ export function tsv(): string {
         computedBaselineLowDate !== "unresolved",
       computedBaselineLowDate,
       computedBaselineHighDate,
+      engineCount,
     };
   }
 
@@ -85,4 +89,18 @@ export function tsv(): string {
     delimiter: "\t",
     cast: { boolean: (b) => (b ? "TRUE" : "FALSE") },
   });
+}
+
+function countEngines(calculation: ReturnType<typeof computeBaseline>): number {
+  const engines = new Set<string>();
+  for (const [, release] of calculation.support.entries()) {
+    if (release) {
+      const { engine } = release.browser.current().data;
+      if (engine) {
+        engines.add(engine);
+      }
+    }
+  }
+
+  return engines.size;
 }
