@@ -2,7 +2,7 @@ import { stringify } from "csv-stringify/sync";
 import { fileURLToPath } from "node:url";
 import * as caniuse from "./caniuse.mjs";
 import { CaniuseGit } from "./caniuse.mjs";
-import { caniuseIds } from "./web-features.mjs";
+import { caniuseIds } from "./sources/web-features.mjs";
 
 const caniuseIdsInWebFeatures = new Set(caniuseIds());
 

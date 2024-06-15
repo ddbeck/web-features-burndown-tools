@@ -2,11 +2,11 @@ import { stringify } from "csv-stringify/sync";
 
 import { computeBaseline } from "compute-baseline";
 
-import * as bcd from "./browser-compat-data.mjs";
+import * as bcd from "./sources/browser-compat-data.mjs";
 import * as mdn from "./sources/mdn-content-inventory.mjs";
 import * as mdnTraffic from "./sources/mdn-traffic-spreadsheet.mjs";
+import * as webFeatures from "./sources/web-features.mjs";
 import { findlastIntroducedDate } from "./utils.mjs";
-import * as webFeatures from "./web-features.mjs";
 
 export function tsv(): string {
   const compatKeys = bcd.compatKeys([

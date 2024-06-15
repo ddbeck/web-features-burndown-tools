@@ -2,10 +2,10 @@ import { Temporal } from "@js-temporal/polyfill";
 
 import { writeFileSync } from "fs";
 import { fileURLToPath } from "url";
-import * as bcd from "./browser-compat-data.mjs";
 import * as caniuseData from "./caniuse.mjs";
+import * as bcd from "./sources/browser-compat-data.mjs";
 import * as mdn from "./sources/mdn-content-inventory.mjs";
-import * as webFeaturesData from "./web-features.mjs";
+import * as webFeaturesData from "./sources/web-features.mjs";
 
 export interface ProgressReport {
   meta: {
