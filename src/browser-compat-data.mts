@@ -5,40 +5,6 @@ import { Compat } from "compute-baseline/browser-compat-data";
 export const commitHash = getPackageHash();
 export const version = getVersion();
 
-// export class BrowserCompatData {
-//   readonly viaImport: boolean;
-//   readonly version: string;
-//   readonly hash?: string;
-
-//   constructor(opts?: { version: string } | { hash: string }) {
-//     if (opts === undefined) {
-//       this.viaImport = true;
-//       // TODO: set this.version
-//       // TODO: set this.hash
-//       // TODO: use data from node_modules
-//       // TODO: new Compat()
-//       return;
-//     }
-//     this.viaImport = false;
-
-//     if ("version" in opts) {
-//       this.version = opts.version;
-//       // TODO: set this.hash
-//       // TODO: use data from download
-//       // TODO: new Compat(<data>)
-//       return;
-//     }
-
-//     if ("hash" in opts) {
-//       this.hash = opts.hash;
-//       // TODO: this.version
-//       // TODO: use data from Git build
-//       // TODO: new Compat(<data>)
-//       return;
-//     }
-//   }
-// }
-
 export function compatKeys(entryPoints: string[]) {
   const result = [];
   const compat = new Compat();
