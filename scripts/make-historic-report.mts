@@ -53,14 +53,23 @@ function findNearestContentInventory(
   let nearest: (typeof releases)[0] | null = null;
 
   for (const [version, dt] of releases) {
-    const [, buildinfo] = version.split("-");
-    assert(buildinfo);
-    const [yyymmdd] = buildinfo.split(".");
-    assert(yyymmdd);
+    const versionYear = (() => {
+      if (version.includes("-")) {
+        const [, buildInfo] = version.split("-"); // ["MAJOR.MINOR.PATCH", "YYYYMMDD.hash"]
+        assert(typeof buildInfo === "string");
+        const [yyyymmdd] = buildInfo.split(".");
+        assert(typeof yyyymmdd === "string");
+        return yyyymmdd;
+      } else {
+        const [, , yyyymmdd] = version.split("."); // [major, minor, patch] where patch is YYYYMMDD
+        assert(typeof yyyymmdd === "string");
+        return yyyymmdd;
+      }
+    })();
 
     const yyyymmddTarget = target.toString().slice(0, 10).replaceAll("-", "");
 
-    if (yyymmdd.localeCompare(yyyymmddTarget) <= 0) {
+    if (versionYear.localeCompare(yyyymmddTarget) <= 0) {
       nearest = [version, dt];
     } else {
       break;
@@ -82,20 +91,28 @@ const now = Temporal.Now.zonedDateTimeISO("UTC");
 let target = START_DATE;
 
 while (Temporal.ZonedDateTime.compare(target, now) < 1) {
-  const pkgs = ["@mdn/browser-compat-data", "web-features", "caniuse-lite"];
+  const pkgs = [
+    "@mdn/browser-compat-data",
+    "web-features",
+    "caniuse-lite",
+    "@ddbeck/mdn-content-inventory",
+  ];
 
   for (const pkg of pkgs) {
-    const [version, dt] = findNearestRelease(npmReleases(pkg), target);
+    const [version, dt] = (() => {
+      switch (pkg) {
+        case "@ddbeck/mdn-content-inventory":
+          return findNearestContentInventory(npmReleases(pkg), target);
+        default:
+          return findNearestRelease(npmReleases(pkg), target);
+      }
+    })();
+
     const pkgSpec = `${pkg}@${version}`;
     console.warn(`Installing ${pkgSpec} (${dt})`);
     installNpmPackage(pkgSpec);
   }
 
-  const [mdnContentRelease] = findNearestContentInventory(
-    npmReleases("@ddbeck/mdn-content-inventory"),
-    target,
-  );
-  installNpmPackage(`@ddbeck/mdn-content-inventory@${mdnContentRelease}`);
   execaSync("npx", ["tsx", "./src/generate-report.mts"], {
     env: { REPORT_DATE: target.toString() },
     stdio: "inherit",
