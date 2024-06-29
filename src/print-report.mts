@@ -1,24 +1,28 @@
+import { Temporal } from "@js-temporal/polyfill";
+import { markdownTable } from "markdown-table";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import yargs from "yargs";
 import { ProgressReport } from "./generate-report.mjs";
-import { markdownTable } from "markdown-table";
-import { Temporal } from "@js-temporal/polyfill";
+
+const TODAY = Temporal.Now.instant().toZonedDateTimeISO("UTC").startOfDay();
 
 function main() {
   const argv = yargs(process.argv.slice(2))
     .command(
-      "$0 <from> <to>",
+      "$0 [<from> <to>]",
       "Print progress from one report to the another.",
       (yargs) => {
         yargs
           .positional("from", {
             describe: "Path to starting report JSON file",
             type: "string",
+            default: `reports/${temporalToFileName(TODAY.subtract({ days: 7 }))}`,
           })
           .positional("to", {
             describe: "Path to ending report JSON file",
             type: "string",
+            default: `reports/${temporalToFileName(TODAY)}`,
           });
       },
     )
@@ -152,6 +156,10 @@ function formatChange(number: number) {
 
 function formatPercentage(number: number) {
   return `${(number * 100).toFixed(2)}%`;
+}
+
+function temporalToFileName(dt: Temporal.ZonedDateTime) {
+  return dt.toPlainDateTime().toString().replaceAll(/[.:]/g, "") + ".json";
 }
 
 if (import.meta.url.startsWith("file:")) {
