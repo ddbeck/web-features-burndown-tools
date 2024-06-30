@@ -41,6 +41,7 @@
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
     "web-features": "^0.8.6-dev-20240627141101-be5938c",
+    "winston": "^3.13.0",
     "yargs": "^17.7.2"
   }
 }
