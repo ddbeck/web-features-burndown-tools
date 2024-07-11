@@ -1,15 +1,15 @@
 import { execaSync } from "execa";
 
-import webFeatures from "web-features";
+import { features } from "web-features";
 
 export function ids(): string[] {
-  return Object.entries(webFeatures).map(([id]) => id);
+  return Object.entries(features).map(([id]) => id);
 }
 
 export function caniuseIds(): string[] {
   const ids = [];
 
-  for (const [, { caniuse }] of Object.entries(webFeatures)) {
+  for (const [, { caniuse }] of Object.entries(features)) {
     if (Array.isArray(caniuse)) {
       ids.push(...caniuse);
     } else if (typeof caniuse === "string") {
@@ -23,7 +23,7 @@ export function caniuseIds(): string[] {
 export function compatKeys(): string[] {
   const result = [];
 
-  for (const [, featureData] of Object.entries(webFeatures)) {
+  for (const [, featureData] of Object.entries(features)) {
     for (const compatKey of featureData.compat_features ?? []) {
       result.push(compatKey);
     }
