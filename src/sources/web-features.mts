@@ -1,6 +1,11 @@
 import { execaSync } from "execa";
 
-import { features } from "web-features";
+// Before v10: import features from "web-features";
+import * as webFeatures from "web-features";
+
+const features = (
+  "features" in webFeatures ? webFeatures.features : webFeatures
+) as typeof webFeatures.features;
 
 export function ids(): string[] {
   return Object.entries(features).map(([id]) => id);
