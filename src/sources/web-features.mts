@@ -1,11 +1,11 @@
 import { execaSync } from "execa";
 
-// Before v10: import features from "web-features";
-import * as webFeatures from "web-features";
+import * as wf from "web-features";
 
+// Handle old-style import from web-features
 const features = (
-  "features" in webFeatures ? webFeatures.features : webFeatures
-) as typeof webFeatures.features;
+  "default" in wf ? wf.default : wf.features
+) as typeof wf.default;
 
 export function ids(): string[] {
   return Object.entries(features).map(([id]) => id);
