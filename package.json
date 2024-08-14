@@ -20,13 +20,14 @@
     "@types/mocha": "^10.0.6",
     "@types/node": "^18.19.11",
     "@types/prompts": "^2.4.9",
-    "@types/yargs": "^17.0.32",
+    "@types/yargs": "^17.0.33",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
     "eslint": "^8.56.0",
     "mocha": "^10.4.0",
     "prettier": "^3.1.1",
-    "tsx": "^4.7.0"
+    "tsx": "^4.7.0",
+    "yargs": "^17.7.2"
   },
   "dependencies": {
     "@ddbeck/mdn-content-inventory": "^0.2.20240725",
@@ -44,7 +45,6 @@
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
     "web-features": "^1.0.0-dev-20240725163450-6309a21",
-    "winston": "^3.13.0",
-    "yargs": "^17.7.2"
+    "winston": "^3.13.0"
   }
 }

@@ -10,7 +10,7 @@ const TODAY = Temporal.Now.instant().toZonedDateTimeISO("UTC").startOfDay();
 function main() {
   const argv = yargs(process.argv.slice(2))
     .command(
-      "$0 [<from> <to>]",
+      "$0 [from] [to]",
       "Print progress from one report to the another.",
       (yargs) => {
         yargs
