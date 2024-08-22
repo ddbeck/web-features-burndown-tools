@@ -30,7 +30,7 @@
     "yargs": "^17.7.2"
   },
   "dependencies": {
-    "@ddbeck/mdn-content-inventory": "^0.2.20240815",
+    "@ddbeck/mdn-content-inventory": "^0.2.20240822",
     "@js-temporal/polyfill": "^0.4.4",
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
     "big-json": "^3.2.0",
@@ -44,7 +44,7 @@
     "execa": "^8.0.1",
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
-    "web-features": "^1.1.0-dev-20240815131144-321a53a",
+    "web-features": "^1.1.0-dev-20240822130516-ce877b6",
     "winston": "^3.13.0"
   }
 }
