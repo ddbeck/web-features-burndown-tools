@@ -30,11 +30,11 @@
     "yargs": "^17.7.2"
   },
   "dependencies": {
-    "@ddbeck/mdn-content-inventory": "^0.2.20240919",
+    "@ddbeck/mdn-content-inventory": "^0.2.20240926",
     "@js-temporal/polyfill": "^0.4.4",
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
     "big-json": "^3.2.0",
-    "caniuse-lite": "^1.0.30001662",
+    "caniuse-lite": "^1.0.30001664",
     "canvas": "^2.11.2",
     "chart.js": "^4.4.1",
     "clipboardy": "^4.0.0",
@@ -44,7 +44,7 @@
     "execa": "^8.0.1",
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
-    "web-features": "^1.3.0-dev-20240918175954-49d7c42",
+    "web-features": "^1.4.0-dev-20240926155215-7daa3a6",
     "winston": "^3.13.0"
   }
 }
