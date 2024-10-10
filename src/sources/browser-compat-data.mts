@@ -9,7 +9,9 @@ export function compatKeys(entryPoints: string[]) {
   const result = [];
   const compat = new Compat();
   for (const feature of compat.walk(entryPoints)) {
-    result.push(feature.id);
+    if (!feature.deprecated) {
+      result.push(feature.id);
+    }
   }
   return result;
 }
