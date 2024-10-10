@@ -18,6 +18,7 @@ export function tsv(): string {
     "mathml",
     "svg",
     "webassembly",
+    "webdriver",
   ]);
   const bcdCommitHash = bcd.commitHash;
 
