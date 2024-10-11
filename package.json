@@ -41,7 +41,7 @@
     "canvas": "^2.11.2",
     "chart.js": "^4.4.1",
     "clipboardy": "^4.0.0",
-    "compute-baseline": "^0.1.0-dev-20240506113223-2627571",
+    "compute-baseline": "^0.1.1",
     "csv-parse": "^5.5.3",
     "csv-stringify": "^6.4.5",
     "execa": "^8.0.1",
