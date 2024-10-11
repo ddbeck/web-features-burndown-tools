@@ -5,7 +5,7 @@ import * as wf from "web-features";
 // Handle old-style import from web-features
 const features = (
   "default" in wf ? wf.default : wf.features
-) as typeof wf.default;
+) as typeof wf.features;
 
 export function ids(): string[] {
   return Object.entries(features).map(([id]) => id);
