@@ -8,6 +8,8 @@ import * as mdnTraffic from "./sources/mdn-traffic-spreadsheet.mjs";
 import * as webFeatures from "./sources/web-features.mjs";
 import { findlastIntroducedDate } from "./utils.mjs";
 
+import { feature } from "compute-baseline/browser-compat-data";
+
 export function tsv(): string {
   const compatKeys = bcd.compatKeys([
     "api",
@@ -46,6 +48,8 @@ export function tsv(): string {
     computedBaselineHighDate: string | null | "unresolved";
     engineCount: number;
     lastIntroducedDate: string | null | "unresolved";
+    isDeprecated: boolean | null;
+    isStandardTrack: boolean | null;
   }
 
   function toBurndownEntry(compatKey: string): BurndownEntry {
@@ -53,6 +57,10 @@ export function tsv(): string {
     let computedBaselineHighDate: string | null = "unresolved";
     let lastIntroducedDate: string | null = "unresolved";
     let engineCount: number = 0;
+
+    const f = feature(compatKey);
+    const isDeprecated = f.deprecated ?? null;
+    const isStandardTrack = f.data.__compat?.status?.standard_track ?? null;
 
     let calculation;
     try {
@@ -90,6 +98,8 @@ export function tsv(): string {
       computedBaselineHighDate,
       engineCount,
       lastIntroducedDate,
+      isDeprecated,
+      isStandardTrack,
     };
   }
 
