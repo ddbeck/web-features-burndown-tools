@@ -18,7 +18,7 @@
   "license": "UNLICENSED",
   "private": "true",
   "devDependencies": {
-    "@tsconfig/strictest": "^2.0.2",
+    "@tsconfig/strictest": "^2.0.5",
     "@types/caniuse-lite": "^1.0.5",
     "@types/mocha": "^10.0.6",
     "@types/node": "^18.19.11",
