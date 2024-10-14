@@ -5,9 +5,12 @@ export function findlastIntroducedDate(
   calculation: ReturnType<typeof computeBaseline>,
 ): Temporal.PlainDate | undefined {
   const dates = [];
-  for (const release of calculation.support.values()) {
-    if (release?.date) {
-      dates.push(release?.date);
+  for (const initialSupport of calculation.support.values()) {
+    if (initialSupport) {
+      const { release } = initialSupport;
+      if (release.date) {
+        dates.push(release.date);
+      }
     }
   }
 
