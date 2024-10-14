@@ -1,32 +1,20 @@
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import tsParser from "@typescript-eslint/parser";
+// @ts-check
+
+import { includeIgnoreFile } from "@eslint/compat";
+import eslint from "@eslint/js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import tseslint from "typescript-eslint";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
+const gitignorePath = path.resolve(__dirname, ".gitignore");
 
-export default [
-  ...compat.extends(
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-  ),
+export default tseslint.config(
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+  includeIgnoreFile(gitignorePath),
   {
-    plugins: {
-      "@typescript-eslint": typescriptEslint,
-    },
-
-    languageOptions: {
-      parser: tsParser,
-    },
-
     rules: {
       "no-warning-comments": [
         "error",
@@ -37,4 +25,4 @@ export default [
       ],
     },
   },
-];
+);
