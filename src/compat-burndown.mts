@@ -102,9 +102,9 @@ export function tsv(): string {
 
 function countEngines(calculation: ReturnType<typeof computeBaseline>): number {
   const engines = new Set<string>();
-  for (const [, release] of calculation.support.entries()) {
-    if (release) {
-      const { engine } = release.browser.current().data;
+  for (const [, initialSupport] of calculation.support.entries()) {
+    if (initialSupport) {
+      const { engine } = initialSupport.release.browser.current().data;
       if (engine) {
         engines.add(engine);
       }
