@@ -44,7 +44,7 @@
     "chart.js": "^4.4.1",
     "clipboardy": "^4.0.0",
     "compute-baseline": "^0.2.0-dev-20241008152122-56b817b",
-    "csv-parse": "^5.5.3",
+    "csv-parse": "^5.5.6",
     "csv-stringify": "^6.4.5",
     "execa": "^8.0.1",
     "markdown-table": "^3.0.3",
