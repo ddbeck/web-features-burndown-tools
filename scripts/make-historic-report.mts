@@ -126,3 +126,6 @@ execaSync(
   ["restore", "--worktree", "package.json", "package-lock.json"],
   { stdio: "inherit" },
 );
+
+console.log("Reinstall node modules.");
+installNpmPackage("");
