@@ -43,7 +43,7 @@ const caniuseBurndownPath = new URL(join(`${timestamp}.caniuse.tsv`), tsvsDir);
 const { updatedSources } = await prompts({
   type: "confirm",
   name: "updatedSources",
-  message: "Did you run `npm run update-sources` first?",
+  message: "Did you run `npm run update-sources:live` first?",
   stdout: process.stderr,
 });
 if (updatedSources === false) {
@@ -54,7 +54,7 @@ if (updatedSources === false) {
 execa("git", ["add", "package-lock.json", "package.json"]);
 
 console.warn("Generating TSV for browser-compat-data and MDN burndown list.");
-console.warn("This will may a few minutes, please wait.");
+console.warn("This may take a few minutes, please wait.");
 const bcdBurndownTsv = compatBurndown.tsv();
 await writeFile(bcdBurndownPath, bcdBurndownTsv);
 console.warn(
@@ -62,7 +62,7 @@ console.warn(
 );
 
 console.warn("Generating TSV for caniuse burndown list.");
-console.warn("This will may a few minutes, please wait.");
+console.warn("This may take a few minutes, please wait.");
 const caniuseBurndownTsv = caniuseBurndown.tsv();
 await writeFile(caniuseBurndownPath, caniuseBurndownTsv);
 console.warn(
@@ -89,7 +89,7 @@ await confirm(
   "Have you updated the ranges for every filter view on this sheet?",
 );
 
-confirm("Are you ready to copy the caniuse TSV to your clipboard?");
+await confirm("Are you ready to copy the caniuse TSV to your clipboard?");
 
 await clipboard.write(caniuseBurndownTsv);
 console.warn(`Open the sheet in your browser: ${caniuseBurndownPasteTarget}`);

@@ -20,6 +20,11 @@ function getPackageHash(): string {
   const { dependencies } = JSON.parse(stdout);
   const url = new URL(dependencies["@mdn/browser-compat-data"].resolved);
   const hash = url.hash.slice(1); // omit leading `#`
+
+  if (typeof hash !== "string" || hash.length < 4) {
+    throw new Error(`Unable to get hash from ${url}`);
+  }
+
   return hash;
 }
 
