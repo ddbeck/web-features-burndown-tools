@@ -42,7 +42,7 @@
   "dependencies": {
     "@ddbeck/mdn-content-inventory": "^0.2.20241031",
     "@js-temporal/polyfill": "^0.4.4",
-    "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
+    "@mdn/browser-compat-data": "^5.6.11",
     "big-json": "^3.2.0",
     "caniuse-lite": "^1.0.30001676",
     "canvas": "^2.11.2",
