@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import yargs from "yargs";
 import { ProgressReport } from "./generate-report.mjs";
+import { temporalToFileName } from "./temporal-to-file-name.mjs";
 
 const TODAY = Temporal.Now.instant().toZonedDateTimeISO("UTC").startOfDay();
 
@@ -156,10 +157,6 @@ function formatChange(number: number) {
 
 function formatPercentage(number: number) {
   return `${(number * 100).toFixed(2)}%`;
-}
-
-function temporalToFileName(dt: Temporal.ZonedDateTime) {
-  return dt.toPlainDateTime().toString().replaceAll(/[.:]/g, "") + ".json";
 }
 
 if (import.meta.url.startsWith("file:")) {
