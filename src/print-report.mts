@@ -138,6 +138,25 @@ function formatCoverageTable(a: ProgressReport, b: ProgressReport): string {
               a.browserCompatData.keys.length,
         ),
       ],
+      [
+        "browser-compat-data keys (standard, non-deprecated)",
+        `${a.webFeatures.mdnBrowserCompatDataStandardNonDeprecatedKeys.length} of ${a.browserCompatData.standardNonDeprecatedKeys.length}`,
+        formatPercentage(
+          a.webFeatures.mdnBrowserCompatDataStandardNonDeprecatedKeys.length /
+            a.browserCompatData.standardNonDeprecatedKeys.length,
+        ),
+        `${b.webFeatures.mdnBrowserCompatDataStandardNonDeprecatedKeys.length} of ${b.browserCompatData.standardNonDeprecatedKeys.length}`,
+        formatPercentage(
+          b.webFeatures.mdnBrowserCompatDataStandardNonDeprecatedKeys.length /
+            b.browserCompatData.standardNonDeprecatedKeys.length,
+        ),
+        formatChange(
+          b.webFeatures.mdnBrowserCompatDataStandardNonDeprecatedKeys.length /
+            b.browserCompatData.standardNonDeprecatedKeys.length -
+            a.webFeatures.mdnBrowserCompatDataStandardNonDeprecatedKeys.length /
+              a.browserCompatData.standardNonDeprecatedKeys.length,
+        ),
+      ],
     ].map((row) => row.map((cell) => `${cell}`)),
     { align: ["l", "r", "r", "r", "r", "r"] },
   );

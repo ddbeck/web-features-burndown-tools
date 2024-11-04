@@ -18,6 +18,7 @@ export interface ProgressReport {
 
   browserCompatData: {
     keys: string[];
+    standardNonDeprecatedKeys: string[];
   };
 
   mdnContent: {
@@ -31,6 +32,8 @@ export interface ProgressReport {
   webFeatures: {
     ids: string[];
     mdnBrowserCompatDataKeys: string[]; // Unique citations!
+    mdnBrowserCompatDataStandardNonDeprecatedKeys: string[];
+    // mdnBrowserCompatDataKeysByLastImplemented: Map<number, string[]>;
     caniuseIds: string[]; // Unique citations!
   };
 }
@@ -77,6 +80,19 @@ function calculateProgress(): ProgressReport {
         "svg",
         "webassembly",
       ]),
+      standardNonDeprecatedKeys: bcd.compatKeysFiltered(
+        [
+          "api",
+          "css",
+          "html",
+          "http",
+          "javascript",
+          "mathml",
+          "svg",
+          "webassembly",
+        ],
+        { requireNonDeprecated: true, requireStandardTrack: true },
+      ),
     },
     mdnContent: {
       browserCompatKeys: unique(mdn.compatKeys),
@@ -87,6 +103,12 @@ function calculateProgress(): ProgressReport {
     webFeatures: {
       ids: webFeaturesData.ids(),
       mdnBrowserCompatDataKeys: unique(webFeaturesData.compatKeys()),
+      mdnBrowserCompatDataStandardNonDeprecatedKeys: unique(
+        webFeaturesData.compatKeysFiltered({
+          requireNonDeprecated: true,
+          requireStandardTrack: true,
+        }),
+      ),
       caniuseIds: unique(webFeaturesData.caniuseIds()),
     },
   };
