@@ -59,7 +59,7 @@ function main() {
     `Drop-dead keys per week: ${Math.ceil(keysToGo / dropDeadWeeksToGo)}`,
   );
   console.log(
-    `Drop-dead keys per day:  ${Math.ceil(keysToGo / dropDeadWeeksToGo)}`,
+    `Drop-dead keys per day:  ${Math.ceil(keysToGo / dropDeadDaysToGo)}`,
   );
 }
 
