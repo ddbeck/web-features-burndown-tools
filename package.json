@@ -51,7 +51,7 @@
     "compute-baseline": "^0.2.0-dev-20241008152122-56b817b",
     "csv-parse": "^5.5.3",
     "csv-stringify": "^6.4.5",
-    "execa": "^8.0.1",
+    "execa": "^9.5.1",
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
     "web-features": "^2.7.0-dev-20241120175238-c3623c0",
