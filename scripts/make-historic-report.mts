@@ -3,7 +3,7 @@ import assert from "assert";
 import { execaSync } from "execa";
 
 const TODAY = Temporal.Now.instant().toZonedDateTimeISO("UTC").startOfDay();
-const START_DATE = TODAY.subtract({ weeks: 2 });
+const START_DATE = TODAY.subtract({ weeks: 1 });
 
 // Note: If you want to generate all historic data from inception, then you probably want to replace the above with this:
 // const START_DATE = Temporal.Instant.from(
