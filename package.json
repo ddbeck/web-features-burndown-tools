@@ -54,7 +54,7 @@
     "execa": "^8.0.1",
     "markdown-table": "^3.0.3",
     "prompts": "^2.4.2",
-    "web-features": "^2.12.0-dev-20241212103343-8525f90",
+    "web-features": "^2.13.0",
     "winston": "^3.13.0"
   }
 }
