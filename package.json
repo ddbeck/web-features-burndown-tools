@@ -46,7 +46,7 @@
     "big-json": "^3.2.0",
     "caniuse-lite": "^1.0.30001690",
     "canvas": "^2.11.2",
-    "chart.js": "^4.4.1",
+    "chart.js": "^4.4.7",
     "clipboardy": "^4.0.0",
     "compute-baseline": "^0.2.0-dev-20241008152122-56b817b",
     "csv-parse": "^5.5.3",
