@@ -79,6 +79,7 @@ function calculateProgress(): ProgressReport {
         "mathml",
         "svg",
         "webassembly",
+        "webdriver",
       ]),
       standardNonDeprecatedKeys: bcd.compatKeysFiltered(
         [
@@ -90,6 +91,7 @@ function calculateProgress(): ProgressReport {
           "mathml",
           "svg",
           "webassembly",
+          "webdriver",
         ],
         { requireNonDeprecated: true, requireStandardTrack: true },
       ),
