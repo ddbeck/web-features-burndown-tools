@@ -6,7 +6,7 @@ export function syncCapture(...exec: Parameters<typeof execFileSync>) {
     ...opts,
     stdio: "pipe",
     encoding: "utf-8",
-  });
+  }) as string;
 }
 
 export function syncLoud(...exec: Parameters<typeof execFileSync>) {

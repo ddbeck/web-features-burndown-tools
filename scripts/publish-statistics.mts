@@ -74,8 +74,37 @@ const commentUrl = syncCapture("gh", [
   ".comments | last | .url",
   argv.url as string,
 ]);
+const commentId = commentUrl.split("#issuecomment-")[1];
 
 logger.info(`Posted to ${commentUrl}`);
+
+const currentBody = syncCapture("gh", [
+  "issue",
+  "view",
+  "--json=body",
+  "--jq",
+  ".body",
+  argv.url as string,
+]);
+const updatedBody = currentBody.replace(
+  /#issuecomment-\d+/,
+  `#issuecomment-${commentId}`,
+);
+
+if (updatedBody !== currentBody) {
+  console.log();
+  console.log(updatedBody);
+  console.log();
+  await okOrQuit(
+    `Do you want to update the issue description with the above ${argv.url}?`,
+  );
+  syncLoud("gh", [
+    "issue",
+    "edit",
+    `--body=${updatedBody}`,
+    argv.url as string,
+  ]);
+}
 
 function temporalToFileName(dt: Temporal.ZonedDateTime) {
   return dt.toPlainDateTime().toString().replaceAll(/[.:]/g, "") + ".json";
