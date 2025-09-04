@@ -74,7 +74,7 @@ const commentUrl = syncCapture("gh", [
   ".comments | last | .url",
   argv.url as string,
 ]);
-const commentId = commentUrl.split("#issuecomment-")[1];
+const commentId = commentUrl.split("#issuecomment-")[1]?.trimEnd();
 
 logger.info(`Posted to ${commentUrl}`);
 
