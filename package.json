@@ -45,7 +45,7 @@
     "@mdn/browser-compat-data": "github:mdn/browser-compat-data",
     "big-json": "^3.2.0",
     "caniuse-lite": "^1.0.30001692",
-    "canvas": "^2.11.2",
+    "canvas": "^3.2.0",
     "chart.js": "^4.4.1",
     "clipboardy": "^4.0.0",
     "compute-baseline": "^0.4.0-dev-20250902115410-e967495",
