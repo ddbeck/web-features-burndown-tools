@@ -86,10 +86,9 @@ const currentBody = syncCapture("gh", [
   ".body",
   argv.url as string,
 ]);
-const updatedBody = currentBody.replace(
-  /#issuecomment-\d+/,
-  `#issuecomment-${commentId}`,
-);
+const updatedBody = currentBody
+  .replace(/#issuecomment-\d+/, `#issuecomment-${commentId}`)
+  .trimEnd();
 
 if (updatedBody !== currentBody) {
   console.log();
